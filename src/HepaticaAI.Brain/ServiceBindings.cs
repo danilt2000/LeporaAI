@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HepaticaAI.Brain.Services;
+using HepaticaAI.Core.Interfaces.AI;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HepaticaAI.Brain
@@ -7,14 +9,7 @@ namespace HepaticaAI.Brain
         {
                 public static IServiceCollection AddBrain(this IServiceCollection serviceCollection, IConfiguration configuration)
                 {
-                        //serviceCollection.AddSingleton<IObsidianProcessor, ObsidianProcessor>();
-
-                        //serviceCollection.AddLogging(config =>
-                        //{
-                        //        config.AddProvider(new ApiLoggerProvider(new TelegramBotMessengerSender()));
-
-                        //        config.SetMinimumLevel(LogLevel.Error);
-                        //});
+                        serviceCollection.AddSingleton<ILLMClient, KoboldCppLLMClient>();
 
                         return serviceCollection;
                 }

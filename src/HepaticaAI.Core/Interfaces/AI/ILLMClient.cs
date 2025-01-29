@@ -2,6 +2,8 @@
 {
         public interface ILLMClient
         {
+                void Initialize();
+
                 Task<string> GenerateAsync(string parametrs, string prompt);
         }
 }

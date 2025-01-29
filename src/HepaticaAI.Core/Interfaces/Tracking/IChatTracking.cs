@@ -1,6 +1,6 @@
 ﻿namespace HepaticaAI.Core.Interfaces.Tracking
 {
-        internal interface IChatTracking
+        public interface IChatTracking
         {
                 string GetRecentMessages(TimeSpan timeSpan);
         }
