@@ -1,4 +1,4 @@
-﻿namespace HepaticaAI.Movement
+﻿namespace HepaticaAI.Vision
 {
         internal class Program
         {
