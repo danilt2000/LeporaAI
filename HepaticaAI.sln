@@ -9,13 +9,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DB08E5E4-ABC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5D449D80-10E0-4E9D-B54F-C8D253E4611B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Brain", "HepaticaAI.Brain\HepaticaAI.Brain.csproj", "{BC295250-605C-44DA-8BC0-C9AE5519D2DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Brain", "src\HepaticaAI.Brain\HepaticaAI.Brain.csproj", "{BC295250-605C-44DA-8BC0-C9AE5519D2DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Voice", "HepaticaAI.Voice\HepaticaAI.Voice.csproj", "{9E1C9D88-9FA2-4B76-8AD5-B7E41B94CBF1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Voice", "src\HepaticaAI.Voice\HepaticaAI.Voice.csproj", "{9E1C9D88-9FA2-4B76-8AD5-B7E41B94CBF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Movement", "HepaticaAI.Movement\HepaticaAI.Movement.csproj", "{D68A5726-E6C4-4040-B6B2-EA7E45E64CB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Movement", "src\HepaticaAI.Movement\HepaticaAI.Movement.csproj", "{D68A5726-E6C4-4040-B6B2-EA7E45E64CB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Core", "HepaticaAI.Core\HepaticaAI.Core.csproj", "{EDDB2003-C62E-47E8-888B-14768C22AD34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Core", "src\HepaticaAI.Core\HepaticaAI.Core.csproj", "{EDDB2003-C62E-47E8-888B-14768C22AD34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Brain.Tests", "tests\HepaticaAI.Brain.Tests\HepaticaAI.Brain.Tests.csproj", "{92EDD544-5917-4CF7-ABC2-5E6E2C1472BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{EDDB2003-C62E-47E8-888B-14768C22AD34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDDB2003-C62E-47E8-888B-14768C22AD34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDDB2003-C62E-47E8-888B-14768C22AD34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92EDD544-5917-4CF7-ABC2-5E6E2C1472BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92EDD544-5917-4CF7-ABC2-5E6E2C1472BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92EDD544-5917-4CF7-ABC2-5E6E2C1472BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92EDD544-5917-4CF7-ABC2-5E6E2C1472BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,5 +59,6 @@ Global
 		{9E1C9D88-9FA2-4B76-8AD5-B7E41B94CBF1} = {DB08E5E4-ABC8-45C0-B2B3-AD506B9827CC}
 		{D68A5726-E6C4-4040-B6B2-EA7E45E64CB4} = {DB08E5E4-ABC8-45C0-B2B3-AD506B9827CC}
 		{EDDB2003-C62E-47E8-888B-14768C22AD34} = {DB08E5E4-ABC8-45C0-B2B3-AD506B9827CC}
+		{92EDD544-5917-4CF7-ABC2-5E6E2C1472BD} = {5D449D80-10E0-4E9D-B54F-C8D253E4611B}
 	EndGlobalSection
 EndGlobal
