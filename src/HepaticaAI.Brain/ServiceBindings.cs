@@ -12,7 +12,7 @@ namespace HepaticaAI.Brain
                 {
                         serviceCollection.AddSingleton<ILLMClient, KoboldCppLLMClient>();
                         serviceCollection.AddScoped<KoboldCppRunner>();
-                        serviceCollection.AddScoped<IMemory, AIPromptsMemory>();
+                        serviceCollection.AddSingleton<IMemory, AIPromptsMemory>();
 
                         return serviceCollection;
                 }

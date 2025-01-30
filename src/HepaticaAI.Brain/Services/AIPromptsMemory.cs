@@ -7,7 +7,7 @@ namespace HepaticaAI.Brain.Services
         {
                 private readonly List<(string Role, string Message)> _history = new();
 
-                public void AddEntry(string role, string message)
+                public void AddEntry(string role, string message)//Todo ADD PROCESSING OF STOP SEQUENCES FOR NEW PEOPLE IN MEMORY
                 {
                         _history.Add((role, message));
                 }
@@ -15,19 +15,22 @@ namespace HepaticaAI.Brain.Services
                 public string GetFormattedPrompt()
                 {
                         var sb = new StringBuilder();
-                        foreach (var entry in _history)
+
+                        for (int i = 0; i < _history.Count; i++)
                         {
-                                if (_history.Count == 0)
+                                string cleanMessage = _history[i].Message.Replace("\r", "").Trim();
+
+                                if (i == 0)
                                 {
-                                        sb.AppendLine($"{entry.Role}: {entry.Message}");
-
-                                        continue;
+                                        sb.Append($"{_history[i].Role}: {cleanMessage}");
                                 }
-
-                                sb.AppendLine($"\n{entry.Role}: {entry.Message}");
+                                else
+                                {
+                                        sb.Append($"\n{_history[i].Role}: {cleanMessage}");
+                                }
                         }
 
-                        return sb.ToString().TrimEnd();
+                        return sb.ToString();
                 }
 
                 public void Clear()

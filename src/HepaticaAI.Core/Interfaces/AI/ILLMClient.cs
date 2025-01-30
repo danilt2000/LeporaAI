@@ -4,6 +4,6 @@
         {
                 void Initialize();
 
-                Task<string> GenerateAsync(string parametrs, string prompt);
+                Task<string> GenerateAsync(string personality, string prompt);
         }
 }

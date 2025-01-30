@@ -39,6 +39,7 @@ namespace HepaticaAI.WPFClient
 
                 private void ConfigureServices(ServiceCollection serviceCollection)
                 {
+                        serviceCollection.AddSingleton<IConfiguration>(Configuration);
                         serviceCollection.AddSingleton<MainWindow>();
 
                         serviceCollection.AddCore(Configuration);
@@ -51,6 +52,9 @@ namespace HepaticaAI.WPFClient
 
                 protected override async void OnExit(ExitEventArgs e)
                 {
+                        var aiLifecycleFacade = ServiceProvider.GetRequiredService<AILifecycleFacade>();
+                        aiLifecycleFacade.EndLife();
+
                         base.OnExit(e);
                 }
         }
