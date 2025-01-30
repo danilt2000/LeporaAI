@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /src/HepaticaAI.Brain/koboldcpp.exe
 /src/HepaticaAI.Brain/Lama3.1-8B-EksiSozlukAI.Q5_K_M.gguf
+/src/HepaticaAI.Brain/Meta-Llama-3.1-8B-Instruct-Q6_K_L.gguf
+/src/HepaticaAI.WPFClient/appsettings.json
+/tests/HepaticaAI.Brain.Tests/appsettings.json
