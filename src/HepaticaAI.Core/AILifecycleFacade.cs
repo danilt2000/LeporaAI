@@ -2,7 +2,7 @@
 
 namespace HepaticaAI.Core
 {
-        internal class AILifecycleFacade(ILLMClient llmClient)
+        public class AILifecycleFacade(ILLMClient llmClient) 
         {
                 public void StartLife()
                 {
@@ -12,5 +12,6 @@ namespace HepaticaAI.Core
                 public void EndLife()
                 {
                 }
+
         }
 }

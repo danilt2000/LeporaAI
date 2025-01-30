@@ -11,6 +11,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="character_personality.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="koboldcpp.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="main_lepora-f08c5ff692c8_json.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -1,15 +1,16 @@
 ﻿using System.Windows;
+using HepaticaAI.Core.Interfaces.AI;
 
 namespace HepaticaAI.WPFClient
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
-    {
-        public MainWindow()
+        /// <summary>
+        /// Interaction logic for MainWindow.xaml
+        /// </summary>
+        public partial class MainWindow : Window
         {
-            InitializeComponent();
+                public MainWindow(ILLMClient llmClient)
+                {
+                        InitializeComponent();
+                }
         }
-    }
 }

@@ -10,6 +10,7 @@ namespace HepaticaAI.Brain
                 public static IServiceCollection AddBrain(this IServiceCollection serviceCollection, IConfiguration configuration)
                 {
                         serviceCollection.AddSingleton<ILLMClient, KoboldCppLLMClient>();
+                        serviceCollection.AddScoped<KoboldCppRunner>();
 
                         return serviceCollection;
                 }

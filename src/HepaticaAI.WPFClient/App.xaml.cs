@@ -3,6 +3,7 @@ using System.Text;
 using System.Windows;
 using HepaticaAI.Brain;
 using HepaticaAI.Core;
+using HepaticaAI.Core.Interfaces.AI;
 using HepaticaAI.Movement;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,8 +30,10 @@ namespace HepaticaAI.WPFClient
                         ConfigureServices(serviceCollection);
                         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
                         ServiceProvider = serviceCollection.BuildServiceProvider();
+                        var aiLifecycleFacade = ServiceProvider.GetRequiredService<AILifecycleFacade>();
+                        aiLifecycleFacade.StartLife();
                         var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-                        //mainWindow.Show();//Todo if not needed delete 
+                        mainWindow.Show();
                         base.OnStartup(eventArgs);
                 }
 
@@ -44,6 +47,11 @@ namespace HepaticaAI.WPFClient
                         serviceCollection.AddMovement(Configuration);
                         //serviceCollection.AddCore(Configuration);//Todo add another binding later 
                         //serviceCollection.AddCore(Configuration);
+                }
+
+                protected override async void OnExit(ExitEventArgs e)
+                {
+                        base.OnExit(e);
                 }
         }
 }

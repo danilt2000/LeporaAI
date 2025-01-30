@@ -2,16 +2,16 @@
 
 namespace HepaticaAI.Brain.Services
 {
-        internal class KoboldCppLLMClient : ILLMClient
+        internal class KoboldCppLLMClient(KoboldCppRunner koboldCppRunner) : ILLMClient
         {
                 public void Initialize()
                 {
-                        throw new NotImplementedException();
+                        koboldCppRunner.StartKoboldCpp();
                 }
 
                 public Task<string> GenerateAsync(string parametrs, string prompt)
                 {
-                        throw new NotImplementedException();
+                        return Task.FromResult(string.Empty);
                 }
         }
 }
