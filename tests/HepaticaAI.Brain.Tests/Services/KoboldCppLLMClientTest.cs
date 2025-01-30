@@ -21,11 +21,12 @@ namespace HepaticaAI.Brain.Tests.Services
                         _sut = automocker.CreateInstance<KoboldCppLLMClient>();
                 }
 
-
                 [Fact]
                 public void InitializeTest()
                 {
                         _sut.Initialize();
+
+                        //_sut.Dispose();
                 }
         }
 }

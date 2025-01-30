@@ -13,5 +13,10 @@ namespace HepaticaAI.Brain.Services
                 {
                         return Task.FromResult(string.Empty);
                 }
+
+                public void Dispose()
+                {
+                        koboldCppRunner.StopKoboldCpp();
+                }
         }
 }

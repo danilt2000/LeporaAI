@@ -1,6 +1,6 @@
 ﻿namespace HepaticaAI.Core.Interfaces.AI
 {
-        public interface ILLMClient
+        public interface ILLMClient : IDisposable
         {
                 void Initialize();
 

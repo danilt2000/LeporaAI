@@ -27,7 +27,7 @@ Content-Type: application/json
   "logprobs": false,
   "presence_penalty": 0,
   "logit_bias": {},
-  "prompt": "User: Первое сообщение\nLepora: Ответ\nUser: как у тебя дела? \nLepora:",
+  "prompt": "User: Первое сообщение\nLepora: Ответ\nUser: расскажи как у тебя дела ?\nLepora:",
   "quiet": true,
   "stop_sequence": ["User:", "\nUser ", "\nLepora: "],
   "use_default_badwordsids": false,
