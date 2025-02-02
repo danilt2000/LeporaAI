@@ -1,28 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HepaticaAI.Core.Interfaces.Memory;
 using HepaticaAI.Core.Interfaces.Vision;
 using Microsoft.Extensions.Configuration;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
 
-namespace HepaticaAI.Voice.Services
+namespace HepaticaAI.Vision.Services
 {
         internal class TwitchChatClient : IChatClient
         {
+                private readonly IMemory _memory;
                 private readonly TwitchClient _client;
 
-                public event Action<string, string> OnMessageReceived;
-                public event Action<string> OnConnected;
+                public event Action<string, string> OnMessageReceived = null!;
+                public event Action<string> OnConnected = null!;
 
-                public TwitchChatClient(IConfiguration configuration /*string username, string accessToken, string channelName*/)
+                public TwitchChatClient(IConfiguration configuration, IMemory memory)
                 {
-                        var credentials = new ConnectionCredentials(username, accessToken);
+                        _memory = memory;
+                        var credentials = new ConnectionCredentials(configuration["TwitchUsername"], configuration["TwitchBotAccessToken"]);
                         _client = new TwitchClient();
-                        _client.Initialize(credentials, channelName);
+                        _client.Initialize(credentials, configuration["TwitchChannelToMonitor"]);
 
                         _client.OnMessageReceived += HandleMessageReceived!;
                         _client.OnConnected += HandleConnected!;
@@ -34,6 +32,8 @@ namespace HepaticaAI.Voice.Services
 
                 private void HandleMessageReceived(object sender, OnMessageReceivedArgs e)
                 {
+                        _memory.AddEntryToProcessInQueue(e.ChatMessage.DisplayName, e.ChatMessage.Message);
+
                         OnMessageReceived?.Invoke(e.ChatMessage.DisplayName, e.ChatMessage.Message);
                 }
 

@@ -12,6 +12,9 @@ namespace HepaticaAI.Core
 
                         serviceCollection.AddSingleton<IHostedService, AIBackgroundService>();
 
+                        serviceCollection.AddSingleton<MessageProcessorSelector>();
+
+
                         //serviceCollection.AddLogging(config =>
                         //{
                         //        config.AddProvider(new ApiLoggerProvider(new TelegramBotMessengerSender()));

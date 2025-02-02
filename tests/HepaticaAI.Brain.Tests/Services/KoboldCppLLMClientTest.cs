@@ -28,11 +28,11 @@ namespace HepaticaAI.Brain.Tests.Services
                 }
 
                 [Fact]
-                public void InitializeTest()
+                public void InitializeTest()//TODO DON'T FORGET DISABLE PARALLELISMS FOR TEST INVOKING
                 {
                         _sut.Initialize();
 
-                        //_sut.Dispose();
+                        _sut.Dispose();
                 }
 
                 [Fact]

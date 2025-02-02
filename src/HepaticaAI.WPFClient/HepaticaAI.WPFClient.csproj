@@ -29,6 +29,7 @@
 		<ProjectReference Include="..\HepaticaAI.Brain\HepaticaAI.Brain.csproj" />
 		<ProjectReference Include="..\HepaticaAI.Core\HepaticaAI.Core.csproj" />
 		<ProjectReference Include="..\HepaticaAI.Movement\HepaticaAI.Movement.csproj" />
+		<ProjectReference Include="..\HepaticaAI.Vision\HepaticaAI.Vision.csproj" />
 	</ItemGroup>
 
 </Project>

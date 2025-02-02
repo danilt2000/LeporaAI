@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HepaticaAI.Core\HepaticaAI.Core.csproj" />
+    <PackageReference Include="DeepL.net" Version="1.10.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +22,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="main_lepora-f08c5ff692c8_json.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="temp_temp_character_personality.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

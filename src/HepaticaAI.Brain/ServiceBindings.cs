@@ -1,6 +1,7 @@
 ﻿using HepaticaAI.Brain.Services;
 using HepaticaAI.Core.Interfaces.AI;
 using HepaticaAI.Core.Interfaces.Memory;
+using HepaticaAI.Core.Interfaces.Translations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +14,7 @@ namespace HepaticaAI.Brain
                         serviceCollection.AddSingleton<ILLMClient, KoboldCppLLMClient>();
                         serviceCollection.AddScoped<KoboldCppRunner>();
                         serviceCollection.AddSingleton<IMemory, AIPromptsMemory>();
+                        serviceCollection.AddSingleton<ITranslation, DeplTranslation>();
 
                         return serviceCollection;
                 }

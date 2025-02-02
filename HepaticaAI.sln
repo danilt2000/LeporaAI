@@ -19,7 +19,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Core", "src\Hepa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Brain.Tests", "tests\HepaticaAI.Brain.Tests\HepaticaAI.Brain.Tests.csproj", "{92EDD544-5917-4CF7-ABC2-5E6E2C1472BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Vision", "HepaticaAI.Vision\HepaticaAI.Vision.csproj", "{83B0B919-0CD8-4CE9-A780-C1898E75F0C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Vision", "src\HepaticaAI.Vision\HepaticaAI.Vision.csproj", "{83B0B919-0CD8-4CE9-A780-C1898E75F0C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Vision.Tests", "tests\HepaticaAI.Vision.Tests\HepaticaAI.Vision.Tests.csproj", "{69377A33-2C20-4A5C-A1B5-CB6E8C61A5A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Movement.Tests", "HepaticaAI.Movement.Tests\HepaticaAI.Movement.Tests.csproj", "{97CCB4F8-7CFA-4834-962B-3E3A4D783CE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +59,14 @@ Global
 		{83B0B919-0CD8-4CE9-A780-C1898E75F0C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83B0B919-0CD8-4CE9-A780-C1898E75F0C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83B0B919-0CD8-4CE9-A780-C1898E75F0C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69377A33-2C20-4A5C-A1B5-CB6E8C61A5A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69377A33-2C20-4A5C-A1B5-CB6E8C61A5A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69377A33-2C20-4A5C-A1B5-CB6E8C61A5A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69377A33-2C20-4A5C-A1B5-CB6E8C61A5A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97CCB4F8-7CFA-4834-962B-3E3A4D783CE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97CCB4F8-7CFA-4834-962B-3E3A4D783CE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97CCB4F8-7CFA-4834-962B-3E3A4D783CE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97CCB4F8-7CFA-4834-962B-3E3A4D783CE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,5 +79,7 @@ Global
 		{EDDB2003-C62E-47E8-888B-14768C22AD34} = {DB08E5E4-ABC8-45C0-B2B3-AD506B9827CC}
 		{92EDD544-5917-4CF7-ABC2-5E6E2C1472BD} = {5D449D80-10E0-4E9D-B54F-C8D253E4611B}
 		{83B0B919-0CD8-4CE9-A780-C1898E75F0C3} = {DB08E5E4-ABC8-45C0-B2B3-AD506B9827CC}
+		{69377A33-2C20-4A5C-A1B5-CB6E8C61A5A0} = {5D449D80-10E0-4E9D-B54F-C8D253E4611B}
+		{97CCB4F8-7CFA-4834-962B-3E3A4D783CE3} = {5D449D80-10E0-4E9D-B54F-C8D253E4611B}
 	EndGlobalSection
 EndGlobal
