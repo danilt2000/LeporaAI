@@ -23,6 +23,9 @@
     <None Update="character_personality.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="ffmpeg.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="for-tests-ggml-base.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
