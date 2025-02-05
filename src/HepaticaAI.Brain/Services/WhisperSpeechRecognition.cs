@@ -1,10 +1,8 @@
 ﻿using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
-using System;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 using Whisper.net;
+using Whisper.net.Ggml;
+using Whisper.net.Logger;
 
 namespace HepaticaAI.Brain.Services
 {
@@ -16,17 +14,102 @@ namespace HepaticaAI.Brain.Services
 
         public async Task InitializeModelAsync(string modelPath = "ggml-base.bin")
         {
-            if (!File.Exists(modelPath))
-                throw new FileNotFoundException("Whisper model not found", modelPath);
+            var modelFileName = "ggml-base.bin";
+            if (!File.Exists(modelFileName))
+            {
+                await DownloadModel(modelFileName, GgmlType.Base);
+            }
 
-            _factory = WhisperFactory.FromPath(modelPath);
+            _factory = WhisperFactory.FromPath(modelFileName);
             _processor = _factory.CreateBuilder()
-                .WithLanguage("auto")  // Better for multi-language
-                .WithThreads(Environment.ProcessorCount)
-                .Build();
+                 .WithLanguage("en")
+                 .Build();
 
             _initialized = true;
         }
+
+        private static async Task DownloadModel(string fileName, GgmlType ggmlType)
+        {
+            Console.WriteLine($"Downloading Model {fileName}");
+            using var modelStream = await WhisperGgmlDownloader.GetGgmlModelAsync(ggmlType);
+            using var fileWriter = File.OpenWrite(fileName);
+            await modelStream.CopyToAsync(fileWriter);
+        }
+
+        internal async Task<string> RecognizeSpeechFromWavVideo()
+        {
+            var ggmlType = GgmlType.Base;
+            var modelFileName = "ggml-base.bin";
+            var wavFileName = "test.wav";
+
+            if (!File.Exists(modelFileName))
+            {
+                await DownloadModel(modelFileName, ggmlType);
+            }
+
+            using var whisperLogger = LogProvider.AddConsoleLogging(WhisperLogLevel.Debug);
+
+            using var whisperFactory = WhisperFactory.FromPath("ggml-base.bin");
+
+            using var processor = whisperFactory.CreateBuilder()
+                .WithLanguage("auto")
+                .Build();
+
+            using var reader = new AudioFileReader(wavFileName);
+            using var resampler = new MediaFoundationResampler(reader, new WaveFormat(16000, reader.WaveFormat.Channels))
+            {
+                ResamplerQuality = 60  // Adjust quality if desired
+            };
+
+            using var ms = new MemoryStream();
+            WaveFileWriter.WriteWavFileToStream(ms, resampler);
+
+            ms.Position = 0;
+            var sb = new StringBuilder();
+
+            await foreach (var result in processor.ProcessAsync(ms))
+            {
+                sb.AppendLine($"{result.Start}->{result.End}: {result.Text}");
+            }
+
+            return sb.ToString();
+        }
+
+        public async Task<string> RecognizeSpeechFromPcmBytes(byte[] pcmData, GgmlType ggmlType = GgmlType.Base)
+        {
+            // 1) Make sure the model exists (download if not)
+            var modelFileName = "ggml-base.bin";
+            if (!File.Exists(modelFileName))
+            {
+                await DownloadModel(modelFileName, ggmlType);
+            }
+
+            // 2) Create the Whisper processor
+            using var whisperLogger = LogProvider.AddConsoleLogging(WhisperLogLevel.Debug);
+            using var whisperFactory = WhisperFactory.FromPath(modelFileName);
+            using var processor = whisperFactory.CreateBuilder()
+                .WithLanguage("auto")
+                .Build();
+
+            // 3) Convert raw PCM data to a WAV stream in memory
+            //    - We specify the wave format: 16 kHz, 16-bit, 1 channel
+            using var wavStream = new MemoryStream();
+            using (var writer = new WaveFileWriter(wavStream, new WaveFormat(16000, 16, 1)))
+            {
+                writer.Write(pcmData, 0, pcmData.Length);
+            }
+            wavStream.Position = 0;  // reset to start
+
+            // 4) Process the WAV from memory
+            var sb = new StringBuilder();
+            await foreach (var result in processor.ProcessAsync(wavStream))
+            {
+                sb.AppendLine($"{result.Start}->{result.End}: {result.Text}");
+            }
+
+            return sb.ToString();
+        }
+
 
         public async Task<string> RecognizeSpeechUsingWhisper(byte[] audioData, int sourceSampleRate)
         {

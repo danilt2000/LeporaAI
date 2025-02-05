@@ -370,3 +370,4 @@ FodyWeavers.xsd
 /src/HepaticaAI.Brain/Llama-3.1-13B-Instruct.Q4_K_M.gguf
 /src/HepaticaAI.Brain/Meta-Llama-3.1-13B-Instruct-abliterated.i1-Q4_K_M.gguf
 /tests/HepaticaAI.Vision.Tests/appsettings.json
+/src/HepaticaAI.Brain/ggml-base.bin
