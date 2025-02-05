@@ -4,11 +4,9 @@ namespace HepaticaAI.Core
 {//Todo if not used delete this class 
         internal class AIBackgroundService(AILifecycleFacade aiLifecycleFacade) : IHostedService
         {
-                public Task StartAsync(CancellationToken cancellationToken)
+                public async Task StartAsync(CancellationToken cancellationToken)
                 {
-                        aiLifecycleFacade.StartLife();
-
-                        return Task.CompletedTask;
+                        await aiLifecycleFacade.StartLife();
                 }
 
                 public Task StopAsync(CancellationToken cancellationToken)
