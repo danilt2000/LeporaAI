@@ -1,17 +1,12 @@
 ﻿using DSharpPlus;
-using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.VoiceNext;
 using DSharpPlus.VoiceNext.EventArgs;
 using HepaticaAI.Core.Interfaces.SpeechRecognition;
 using Microsoft.Extensions.Configuration;
-using System;
+using NAudio.Wave;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using NAudio.Wave;
 
 namespace HepaticaAI.Brain.Services
 {
@@ -81,32 +76,32 @@ namespace HepaticaAI.Brain.Services
 
         private ConcurrentDictionary<uint, Process> ffmpegs;
 
-        private async Task VoiceReceivedHandler(VoiceNextConnection sender, VoiceReceiveEventArgs e)
+        private Task VoiceReceivedHandler(VoiceNextConnection sender, VoiceReceiveEventArgs e)
         {
-            //if (e.User == null) return Task.CompletedTask;
+            if (e.User == null) return Task.CompletedTask;
 
-            //var userId = e.User.Id;
-            //var userLock = _userLocks.GetOrAdd(userId, _ => new object());
+            var userId = e.User.Id;
+            var userLock = _userLocks.GetOrAdd(userId, _ => new object());
 
-            //lock (userLock)
-            //{
-            //    var buffer = _userAudioBuffers.GetOrAdd(userId, _ => new MemoryStream());
-            //    buffer.Write(e.PcmData.ToArray(), 0, e.PcmData.Length);
-            //}
-
-            //return Task.CompletedTask;
-            var fileName = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            var ffmpeg = Process.Start(new ProcessStartInfo
+            lock (userLock)
             {
-                FileName = "ffmpeg",
-                Arguments = $@"-ac 2 -f s16le -ar 48000 -i pipe:0 -ac 2 -ar 44100 {fileName}.wav",
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-            });
+                var buffer = _userAudioBuffers.GetOrAdd(userId, _ => new MemoryStream());
+                buffer.Write(e.PcmData.ToArray(), 0, e.PcmData.Length);
+            }
 
-            await ffmpeg.StandardInput.BaseStream.WriteAsync(e.PcmData);
-            ffmpeg.Dispose();
+            return Task.CompletedTask;
+            //var fileName = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            //var ffmpeg = Process.Start(new ProcessStartInfo
+            //{
+            //    FileName = "ffmpeg",
+            //    Arguments = $@"-ac 2 -f s16le -ar 48000 -i pipe:0 -ac 2 -ar 44100 {fileName}.wav",
+            //    RedirectStandardInput = true,
+            //    UseShellExecute = false,
+            //    CreateNoWindow = true,
+            //});
+
+            //await ffmpeg.StandardInput.BaseStream.WriteAsync(e.PcmData);
+            //ffmpeg.Dispose();
         }
 
         private void SaveAudioToWaveFile(ulong userId, string filePath)
@@ -133,7 +128,7 @@ namespace HepaticaAI.Brain.Services
                 // Здесь указываем *тот же* формат, что приходит из Discord:
                 // По умолчанию: 48 kHz, 16-bit, Mono
                 // Если точно знаете, что стерео, укажите channels = 2.
-                var waveFormat = new WaveFormat(48000, 16, 2);
+                var waveFormat = new WaveFormat(48000, 16, 1);
 
                 // Пишем .wav
                 using (var waveWriter = new WaveFileWriter(filePath, waveFormat))
@@ -142,8 +137,8 @@ namespace HepaticaAI.Brain.Services
                 }
             }
         }
-        private object userLockVideo = new object();
 
+        private object userLockVideo = new object();
 
         private async Task PeriodicWhisperRecognitionLoop()
         {
@@ -173,7 +168,6 @@ namespace HepaticaAI.Brain.Services
                     {
                         if (!_userLocks.TryGetValue(userId, out var userLock)) continue;
 
-                        // Пример: сохраняем в файл user_xxx.wav
                         var filePath = $"user_{userId}_{DateTimeOffset.UtcNow.ToUnixTimeSeconds()}.wav";
                         SaveAudioToWaveFile(userId, filePath);
 

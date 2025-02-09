@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.json">
+    <Content Include="..\..\src\HepaticaAI.WPFClient\appsettings.json" Link="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

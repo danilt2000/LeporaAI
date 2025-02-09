@@ -13,21 +13,17 @@ namespace HepaticaAI.Voice.Services
 
         public void Speak(string text)
         {
-            //Task.Run(() =>
-            //{
-            // Формируем уникальное имя выходного файла
             string outputFile = $"output{DateTime.Now:yyyyMMddHHmmss}.mp3";
 
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                FileName = "edge-tts", // Если программа не найдена, укажите полный путь
+                FileName = "edge-tts",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true
             };
 
-            // Добавляем аргументы по отдельности
             startInfo.ArgumentList.Add("--text");
             startInfo.ArgumentList.Add(text);
             startInfo.ArgumentList.Add("--voice");
@@ -45,7 +41,6 @@ namespace HepaticaAI.Voice.Services
 
                 process.Start();
 
-                // Читаем вывод, чтобы избежать зависания
                 string output = process.StandardOutput.ReadToEnd();
                 string error = process.StandardError.ReadToEnd();
 
@@ -57,14 +52,12 @@ namespace HepaticaAI.Voice.Services
                     return;
                 }
 
-                // Проигрываем созданный аудиофайл
                 audioPlayer.PlayAudio(outputFile);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Error in process: " + ex.Message);
             }
-            //});
         }
     }
 }

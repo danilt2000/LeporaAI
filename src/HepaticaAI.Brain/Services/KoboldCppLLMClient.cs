@@ -29,7 +29,7 @@ namespace HepaticaAI.Brain.Services
 
                 memory.AddEntry(aiMainCharacterName!, string.Empty);
 
-                string promptToSend = "[AI_Vtuber LeporaAI responds playfully. WHEN REPLYING TO CHATTERS, DO NOT WRITE CHAT MESSAGES FOR NON-EXISTENT CHATTERS]\n" + memory.GetFormattedPrompt();
+                string promptToSend = "[AI LeporaAI responds playfully]\n" + memory.GetFormattedPrompt();
                 //string promptToSend = "[Live Twitch stream chat log. AI_Vtuber responds playfully and interacts with viewers.]\n" + memory.GetFormattedPrompt();
 
                 characterPersonality!.prompt = promptToSend;

@@ -12,7 +12,7 @@ namespace HepaticaAI.Core
             //llmClient.Dispose();
 
             //llmClient.Initialize();
-            
+
             movement.Initialize();
 
             chatClient.Connect();

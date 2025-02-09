@@ -1,11 +1,10 @@
-﻿using System.Diagnostics;
-using HepaticaAI.Core.Interfaces.AI;
+﻿using HepaticaAI.Core.Interfaces.AI;
 using HepaticaAI.Core.Interfaces.Memory;
-using System.Speech.Synthesis;
-using System.Text.RegularExpressions;
-using HepaticaAI.Core.Interfaces.Translations;
 using HepaticaAI.Core.Interfaces.Movement;
+using HepaticaAI.Core.Interfaces.Translations;
 using HepaticaAI.Core.Interfaces.Voice;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 namespace HepaticaAI.Core
 {
     public class MessageProcessorSelector : IDisposable
