@@ -1,0 +1,258 @@
+﻿<Window x:Class="HepaticaAI.WPFClient.Views.MainWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d"
+	Title="MainWindow"
+	Height="450"
+	Width="800"
+	Background="#1E1E1E"
+	Foreground="White"
+	Icon="/LeporaDiscordPicture.png">
+
+	<Grid Margin="10">
+		<!-- Разметка сетки: 3 строки и 2 столбца 
+             для упрощённого размещения основных элементов -->
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+		<!-- Верхняя часть: Изображение + 2 кнопки -->
+
+		<!-- Изображение в левом верхнем углу -->
+		<!--<Image Grid.Row="0"
+		       Grid.Column="0"
+		       Source="Images/your_image.png"
+		       Width="60"
+		       Height="60"
+		       Margin="0,0,10,0"
+		       VerticalAlignment="Top"
+		       HorizontalAlignment="Left" />-->
+
+		<Button Grid.Row="0"
+			Grid.Column="1"
+			HorizontalAlignment="Center"
+			Width="200"
+			Height="60"
+			Background="#2D2D2D"
+			Padding="10,5"
+			Cursor="Hand">
+			<Button.Template>
+				<ControlTemplate TargetType="Button">
+					<Border Background="{TemplateBinding Background}"
+						CornerRadius="15"
+						BorderThickness="2"
+						BorderBrush="White">
+						<Grid>
+							<TextBlock Text="Skip message"
+								   Foreground="White"
+								   FontWeight="Bold"
+								   VerticalAlignment="Center"
+								   HorizontalAlignment="Center"
+								   Margin="0,0,40,0" />
+							<Image Source="/Character.png"
+							       Stretch="Uniform"
+							       Margin="100,0,0,0" />
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Button.Template>
+		</Button>
+
+		<Button Grid.Row="0"
+			Grid.Column="0"
+			HorizontalAlignment="Center"
+			Width="200"
+			Height="60"
+			Background="#2D2D2D"
+			Padding="10,5"
+			Cursor="Hand"
+			Click="ChangeSystemPrompt"
+			>
+			<Button.Template>
+				<ControlTemplate TargetType="Button">
+					<Border Background="{TemplateBinding Background}"
+						CornerRadius="15"
+						BorderThickness="2"
+						BorderBrush="White">
+						<Grid>
+							<Ellipse Width="30"
+								 Height="30"
+								 Fill="White"
+								 Stroke="Black"
+								 StrokeThickness="2"
+								 VerticalAlignment="Center"
+								 HorizontalAlignment="Left"
+								 Margin="10,0,0,0" />
+
+							<TextBlock Text="Change system prompts"
+								   Foreground="White"
+								   FontWeight="Bold"
+								   VerticalAlignment="Center"
+								   HorizontalAlignment="Center"
+								   Margin="40,0,0,0" />
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Button.Template>
+		</Button>
+
+		<!-- Можно расположить их рядом или один под другим -->
+
+		<!-- Кнопка "Delete all messages history" (слева) -->
+		<Button Grid.Row="1"
+			Grid.Column="0"
+			HorizontalAlignment="Center"
+			Width="200"
+			Height="60"
+			Background="#2D2D2D"
+			Padding="10,5"
+			Margin="0,20,0,0">
+			<Button.Template>
+				<ControlTemplate TargetType="Button">
+					<Border Background="{TemplateBinding Background}"
+						CornerRadius="15"
+						BorderThickness="2"
+						BorderBrush="White">
+						<Grid>
+
+							<Image Source="/Discord.png"
+							       Margin="0,0,120,0"
+							       Width="60"
+							       Height="60"
+							       Cursor="Hand" />
+
+							<TextBlock Text="Connect to voice"
+								   Foreground="White"
+								   FontWeight="Bold"
+								   VerticalAlignment="Center"
+								   HorizontalAlignment="Center"
+								   Margin="70,0,0,30"
+								   IsHitTestVisible="True"
+								   Cursor="Hand" />
+							<CheckBox x:Name="SwitchCheckBox"
+								  Width="60"
+								  Height="30"
+								  Cursor="Hand"
+								  Background="Transparent"
+								  Foreground="White"
+								  Checked="SwitchCheckBox_Checked"
+								  Unchecked="SwitchCheckBox_Unchecked"
+								  Margin="70,20,0,0">
+								<CheckBox.Template>
+									<ControlTemplate TargetType="CheckBox">
+										<Grid>
+											<!-- Background -->
+											<Border x:Name="SwitchBorder"
+												Width="60"
+												Height="30"
+												CornerRadius="15"
+												Background="Gray" />
+
+											<!-- Circle (Switch Thumb) -->
+											<Ellipse x:Name="SwitchThumb"
+												 Width="25"
+												 Height="25"
+												 Fill="White"
+												 HorizontalAlignment="Left"
+												 Margin="2" />
+										</Grid>
+										<ControlTemplate.Triggers>
+											<Trigger Property="IsChecked"
+												 Value="True">
+												<Setter TargetName="SwitchThumb"
+													Property="HorizontalAlignment"
+													Value="Right" />
+												<Setter TargetName="SwitchBorder"
+													Property="Background"
+													Value="Green" />
+											</Trigger>
+										</ControlTemplate.Triggers>
+									</ControlTemplate>
+								</CheckBox.Template>
+							</CheckBox>
+
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Button.Template>
+		</Button>
+
+		<Button Grid.Row="1"
+			Grid.Column="1"
+			HorizontalAlignment="Center"
+			Width="200"
+			Height="60"
+			Background="#2D2D2D"
+			Padding="10,5"
+			Cursor="Hand"
+			Margin="0,20,0,0">
+			<Button.Template>
+				<ControlTemplate TargetType="Button">
+					<Border Background="{TemplateBinding Background}"
+						CornerRadius="15"
+						BorderThickness="2"
+						BorderBrush="White">
+						<Grid>
+							<Ellipse Width="30"
+								 Height="30"
+								 Fill="Red"
+								 StrokeThickness="2"
+								 VerticalAlignment="Center"
+								 HorizontalAlignment="Left"
+								 Margin="10,0,0,0" />
+
+							<TextBlock Text="Delete all messages history"
+								   Foreground="White"
+								   FontWeight="Bold"
+								   VerticalAlignment="Center"
+								   HorizontalAlignment="Center"
+								   Margin="40,0,0,0" />
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Button.Template>
+		</Button>
+
+		<Button Grid.Row="2"
+		        Grid.Column="0"
+		        HorizontalAlignment="Center"
+		        Width="200"
+		        Height="60"
+		        Background="#2D2D2D"
+		        Padding="10,5"
+		        Cursor="Hand"
+		        Margin="0,0,0,160">
+			<Button.Template>
+				<ControlTemplate TargetType="Button">
+					<Border Background="{TemplateBinding Background}"
+					        CornerRadius="15"
+					        BorderThickness="2"
+					        BorderBrush="White">
+						<Grid>
+							<Image Source="/Chat.png"
+							       Margin="0,0,120,0"
+							       Width="60"
+							       Height="60"
+							       Cursor="Hand" />
+
+							<TextBlock Text="Messages history"
+							           Foreground="White"
+							           FontWeight="Bold"
+							           VerticalAlignment="Center"
+							           HorizontalAlignment="Center"
+							           Margin="60,0,0,0" />
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Button.Template>
+		</Button>
+	</Grid>
+</Window>

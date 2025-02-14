@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Text;
 using System.Windows;
+using HepaticaAI.WPFClient.Views;
 
 namespace HepaticaAI.WPFClient
 {
