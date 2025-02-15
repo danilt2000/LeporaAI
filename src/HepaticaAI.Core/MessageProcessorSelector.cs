@@ -91,7 +91,10 @@ namespace HepaticaAI.Core
                 //synthesizer.SelectVoice("Microsoft Irina Desktop");
 
                 //synthesizer.Speak($"{messageToProcess.Role} {aiAnswer}");
-                _voice.Speak($"{messageToProcess.Role} {aiAnswer}");
+
+                Debug.WriteLine($"Ai answer:{aiAnswer} on user {messageToProcess.Message}");
+                _voice.Speak($"{aiAnswer}");//TODO ADD THERE NICKNAME
+                //_voice.Speak($"{messageToProcess.Role} {aiAnswer}");
                 //_idleTimer.Change(_idleInterval, Timeout.InfiniteTimeSpan);//Todo think about deleting idle timer 
 
                 _movement.CloseMouth();
