@@ -23,8 +23,8 @@ namespace HepaticaAI.WPFClient
         protected override async void OnStartup(StartupEventArgs eventArgs)
         {
             var builder = new ConfigurationBuilder()
-                    .SetBasePath(Directory.GetCurrentDirectory())
-                    .AddJsonFile("appsettings.json", false, true);
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", false, true);
 
             Configuration = builder.Build();
 
@@ -45,6 +45,7 @@ namespace HepaticaAI.WPFClient
         private void ConfigureServices(ServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton<IConfiguration>(Configuration);
+            serviceCollection.AddSingleton<HomePage>();
             serviceCollection.AddSingleton<MainWindow>();
 
             serviceCollection.AddCore(Configuration);

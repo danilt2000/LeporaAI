@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\src\HepaticaAI.Movement\HepaticaAI.Movement.csproj" />
+	  <ProjectReference Include="..\..\src\HepaticaAI.Movement\HepaticaAI.Movement.csproj" />
 	</ItemGroup>
 
 </Project>

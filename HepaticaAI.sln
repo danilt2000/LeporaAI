@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Vision", "src\He
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Vision.Tests", "tests\HepaticaAI.Vision.Tests\HepaticaAI.Vision.Tests.csproj", "{69377A33-2C20-4A5C-A1B5-CB6E8C61A5A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Movement.Tests", "HepaticaAI.Movement.Tests\HepaticaAI.Movement.Tests.csproj", "{97CCB4F8-7CFA-4834-962B-3E3A4D783CE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Movement.Tests", "tests\HepaticaAI.Movement.Tests\HepaticaAI.Movement.Tests.csproj", "{97CCB4F8-7CFA-4834-962B-3E3A4D783CE3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Voice.Tests", "tests\HepaticaAI.Voice.Tests\HepaticaAI.Voice.Tests.csproj", "{6D4C73D7-68FA-4AAF-89A6-BFF4EE8225E1}"
 EndProject

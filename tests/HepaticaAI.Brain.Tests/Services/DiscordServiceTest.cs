@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HepaticaAI.Brain.Services;
+﻿using HepaticaAI.Brain.Services;
 using HepaticaAI.Core.Interfaces.Memory;
 using Microsoft.Extensions.Configuration;
 using Moq.AutoMock;
@@ -33,11 +27,13 @@ namespace HepaticaAI.Brain.Tests.Services
         }
 
         [Fact]
-        public async Task ConnectToVoiceChannelAsyncTest()
+        public async Task GetUsernameByIdAsyncTest()
         {
-            await _sut.ConnectToVoiceChannelAsync(1175432324603719774, 1214942854213009443);
+            await Task.Delay(TimeSpan.FromSeconds(10));
+            
+            var userName  = await _sut.GetUsernameByIdAsync(293977705815343105);
 
-            Debug.WriteLine("Test");
+            Assert.True(userName=="Hepatica");
         }
     }
 }

@@ -15,15 +15,14 @@ namespace HepaticaAI.Core
 
             movement.Initialize();
 
-            chatClient.Connect();
+            chatClient.Connect();//Todo add possibility to disable chat listening
 
-            await speechRecognition.Initialize();
+            speechRecognition.Start();
         }
 
         public void EndLife()
         {
             llmClient.Dispose();
         }
-
     }
 }

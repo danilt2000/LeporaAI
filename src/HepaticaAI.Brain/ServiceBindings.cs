@@ -8,17 +8,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HepaticaAI.Brain
 {
-        public static class ServiceBindings
+    public static class ServiceBindings
+    {
+        public static IServiceCollection AddBrain(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
-                public static IServiceCollection AddBrain(this IServiceCollection serviceCollection, IConfiguration configuration)
-                {
-                        serviceCollection.AddSingleton<ILLMClient, KoboldCppLLMClient>();
-                        serviceCollection.AddScoped<KoboldCppRunner>();
-                        serviceCollection.AddSingleton<IMemory, AIPromptsMemory>();
-                        serviceCollection.AddSingleton<ITranslation, DeplTranslation>();
-                        serviceCollection.AddSingleton<ISpeechRecognition, DiscordSpeechRecognition>();
+            serviceCollection.AddSingleton<ILLMClient, KoboldCppLLMClient>();
+            serviceCollection.AddScoped<KoboldCppRunner>();
+            serviceCollection.AddSingleton<IMemory, AIPromptsMemory>();
+            serviceCollection.AddSingleton<ISystemPromptsUpdater, SystemPromptsUpdater>();
+            serviceCollection.AddSingleton<ITranslation, DeplTranslation>();
+            serviceCollection.AddSingleton<ISpeechRecognition, PythonWebSocketDiscordSpeechRecognition>();
 
-                        return serviceCollection;
-                }
+            return serviceCollection;
         }
+    }
 }

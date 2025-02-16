@@ -7,8 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Services\temp_character_personality.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\..\src\HepaticaAI.WPFClient\appsettings.json" Link="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Services\temp_character_personality.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="temp_character_personality.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

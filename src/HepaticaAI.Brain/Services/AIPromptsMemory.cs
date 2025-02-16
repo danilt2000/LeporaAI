@@ -6,10 +6,20 @@ namespace HepaticaAI.Brain.Services
 {
     internal class AIPromptsMemory : IMemory
     {
+        //private readonly List<(string Role, string Message)> _history =//Todo TEST THIS SET MESSAGES IN MEMORY 
+        //[
+        //    ("Hepatica", "Первое сообщение"),
+        //    ("\nLeporaAI", "Включаюсь"),
+        //    ("\nHepatica", "что делаешь?"),
+        //    ("\nLeporaAI", "")
+        //];
+
         private readonly List<(string Role, string Message)> _history = new();
+
         internal readonly List<(string Role, string Message)> _unprocessedMessagesQueue = new();
-        //internal readonly List<string> _stopSequence = new List<string>();
-        internal readonly List<string> _stopSequence = ["```", ")", "(", "[", "]"];
+        private static readonly List<string> DefaultStopSequence = ["```", ")", "(", "[", "]", "**", "*"];
+
+        private static List<string> _stopSequence = DefaultStopSequence;
 
         private bool _isProcessing = false;
 
@@ -47,7 +57,7 @@ namespace HepaticaAI.Brain.Services
         {
             var sb = new StringBuilder();
 
-            int startIndex = Math.Max(0, _history.Count - 12);
+            int startIndex = Math.Max(0, _history.Count - 14);
 
             for (int i = startIndex; i < _history.Count; i++)
             {
@@ -87,9 +97,13 @@ namespace HepaticaAI.Brain.Services
             return sb.ToString();
         }
 
-        public void Clear()//Todo if it's not used delete it 
+        public void Clear()
         {
             _history.Clear();
+
+            _unprocessedMessagesQueue.Clear();
+
+            _stopSequence = DefaultStopSequence;
         }
 
         public bool HasMessagesToProcess()

@@ -10,7 +10,7 @@ namespace HepaticaAI.Voice.Services
         private void OnPlaybackStopped(object sender, StoppedEventArgs e)
         {
             Console.WriteLine("Событие PlaybackStopped сработало.");
-            _playbackCompleted.Set(); // Разблокируем поток
+            _playbackCompleted.Set();
         }
         public void PlayAudio(string filePath)
         {

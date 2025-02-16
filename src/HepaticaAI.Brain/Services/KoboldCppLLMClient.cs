@@ -9,7 +9,7 @@ using HepaticaAI.Core.Models.Messages;
 
 namespace HepaticaAI.Brain.Services
 {
-    internal class KoboldCppLLMClient(KoboldCppRunner koboldCppRunner, IConfiguration configuration, IMemory memory) : ILLMClient
+    internal class KoboldCppLLMClient(KoboldCppRunner koboldCppRunner, IConfiguration configuration, IMemory memory, ISystemPromptsUpdater systemPromptsUpdater) : ILLMClient
     {
         public void Initialize()
         {
@@ -23,17 +23,17 @@ namespace HepaticaAI.Brain.Services
                 memory.AddEntry(personality, prompt);
 
                 var characterPersonality = JsonSerializer.Deserialize<Personality>(await File.ReadAllTextAsync("character_personality.json"));
-
                 var aiUrl = configuration["AiUrl"];
-                var aiMainCharacterName = configuration["AiMainCharacterName"];
+                var aiMainCharacterName = systemPromptsUpdater.GetCharacterName();//Todo TEST IT 
+                //var aiMainCharacterName = configuration["AiMainCharacterName"];
 
                 memory.AddEntry(aiMainCharacterName!, string.Empty);
 
-                string promptToSend = "[AI LeporaAI responds playfully]\n" + memory.GetFormattedPrompt();
-                //string promptToSend = "[Live Twitch stream chat log. AI_Vtuber responds playfully and interacts with viewers.]\n" + memory.GetFormattedPrompt();
+                //string promptToSend = memory.GetFormattedPrompt();
+                string promptToSend = $"[{aiMainCharacterName} responds playfully]\n" + memory.GetFormattedPrompt();
+                //string promptToSend = $"[LeporaAI responds playfully]\n" + memory.GetFormattedPrompt();
 
                 characterPersonality!.prompt = promptToSend;
-                //characterPersonality!.prompt = memory.GetFormattedPrompt();
 
                 memory.AddUserRoleToStopSequenceIfMissing(personality);
 

@@ -13,7 +13,6 @@ namespace HepaticaAI.Movement.Tests.Services
         {
             var builder = new ConfigurationBuilder();
 
-
             var _config = builder.Build();
 
             var automocker = new AutoMocker();
@@ -29,8 +28,6 @@ namespace HepaticaAI.Movement.Tests.Services
             _sut.Initialize();
 
             _sut.StartIdleAnimation();
-
-            Console.WriteLine("");
         }
     }
 }

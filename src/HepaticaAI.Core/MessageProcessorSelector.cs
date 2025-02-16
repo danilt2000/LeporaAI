@@ -3,8 +3,12 @@ using HepaticaAI.Core.Interfaces.Memory;
 using HepaticaAI.Core.Interfaces.Movement;
 using HepaticaAI.Core.Interfaces.Translations;
 using HepaticaAI.Core.Interfaces.Voice;
+using HepaticaAI.Core.Models.Messages;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using HepaticaAI.Core.Models;
+
 namespace HepaticaAI.Core
 {
     public class MessageProcessorSelector : IDisposable
@@ -15,9 +19,10 @@ namespace HepaticaAI.Core
         private readonly IMovement _movement;
         private readonly IVoiceSynthesis _voice;
         private readonly Timer _timer;
-        private readonly Timer _idleTimer;
-        private readonly TimeSpan _interval = TimeSpan.FromSeconds(2);
-        private readonly TimeSpan _idleInterval = TimeSpan.FromSeconds(30);
+        private readonly SemaphoreSlim _semaphore = new(5);
+        private readonly ConcurrentQueue<(Guid, MessageEntry)> _messageQueue = new();
+        private readonly ConcurrentDictionary<Guid, MessageForVoiceToProcess> _generatedResponses = new();
+        private readonly TimeSpan _interval = TimeSpan.FromSeconds(1);
 
         public MessageProcessorSelector(IMemory memory, ILLMClient llmClient, ITranslation translation, IMovement movement, IVoiceSynthesis voice)
         {
@@ -26,31 +31,77 @@ namespace HepaticaAI.Core
             _translation = translation;
             _movement = movement;
             _voice = voice;
-            _timer = new Timer(Execute, null, TimeSpan.Zero, _interval);
-            _idleTimer = new Timer(HandleIdleState, null, _idleInterval, Timeout.InfiniteTimeSpan);
+            _timer = new Timer(EnqueueMessages, null, TimeSpan.Zero, _interval);
+            Task.Run(ProcessMessagesAsync);
+            Task.Run(SpeakNextMessage);
         }
 
-        private async void HandleIdleState(object? state)
+        private void EnqueueMessages(object? state)
         {
-            //if (!_memory.HasMessagesToProcess() && _memory.IsNotCurrentlyProcessingMessage())
-            //{
-            //        _memory.StartProcessing();
-            //        var messageToProcess = "*Никто ничего не пишет в чат нужно что то сказать*";
+            while (_memory.HasMessagesToProcess())
+            {
+                var messageToProcess = _memory.GetMessageToProcess();
+                var messageId = Guid.NewGuid();
+                _messageQueue.Enqueue((messageId, messageToProcess));
+            }
+        }
 
-            //        var aiAnswer = await _llmClient.GenerateAsync("System", messageToProcess);
+        private async Task ProcessMessagesAsync()
+        {
+            while (true)
+            {
+                await _semaphore.WaitAsync();
+                try
+                {
+                    if (_messageQueue.TryDequeue(out var message))
+                    {
+                        var (messageId, messageToProcess) = message;
 
-            //        Debug.WriteLine($"Ai answer:{aiAnswer}");
+                        Debug.WriteLine($"Processing message {messageId}: {messageToProcess.Message}");
 
-            //        var synthesizer = new SpeechSynthesizer();//TODO REWRITE IT TO ANOTHER TTS!!!!!!!!!!!!!
+                        string aiAnswer =
+                            await _llmClient.GenerateAsync(messageToProcess.Role, messageToProcess.Message);
 
-            //        synthesizer.SelectVoice("Microsoft Irina Desktop");
+                        if (!IsMostlyRussian(aiAnswer))
+                            aiAnswer = await _translation.TranslateEngtoRu(aiAnswer);
 
-            //        synthesizer.Speak(aiAnswer);
+                        _generatedResponses[messageId] = new MessageForVoiceToProcess()
+                        { AiMessage = aiAnswer, UserMessage = messageToProcess.Message };
 
-            //        _memory.StopProcessing();
-            //}
+                        Debug.WriteLine($"Generated AI response {messageId}: {aiAnswer}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+                finally
+                {
+                    _semaphore.Release();
+                }
 
-            //_idleTimer.Change(_idleInterval, Timeout.InfiniteTimeSpan);
+                await Task.Delay(500);
+            }
+        }
+
+        public void SpeakNextMessage()
+        {
+            while (true)
+            {
+                foreach (var messageId in _generatedResponses.Keys)
+                {
+                    if (_generatedResponses.TryRemove(messageId, out var aiAnswer))
+                    {
+                        Debug.WriteLine($"Speaking message {messageId}: {aiAnswer}");
+
+                        _movement.StartWinkAnimation();
+                        _movement.OpenMouth();
+                        Debug.WriteLine($"User message {aiAnswer.UserMessage}: ai answer {aiAnswer.AiMessage}");
+                        _voice.Speak(aiAnswer.AiMessage!);
+                        _movement.CloseMouth();
+                    }
+                }
+            }
         }
 
         public static bool IsMostlyRussian(string text)
@@ -64,48 +115,10 @@ namespace HepaticaAI.Core
             return russianCount >= englishCount;
         }
 
-        private async void Execute(object? state)
-        {
-            if (_memory.HasMessagesToProcess() && _memory.IsNotCurrentlyProcessingMessage())
-            {
-                _memory.StartProcessing();
-
-                var messageToProcess = _memory.GetMessageToProcess();
-
-                //if (IsMostlyRussian(messageToProcess.Message))
-                //    messageToProcess.Message = await _translation.TranslateRutoEng(messageToProcess.Message);
-
-                var aiAnswer = await _llmClient.GenerateAsync(messageToProcess.Role, messageToProcess.Message);
-
-                Debug.WriteLine($"Ai answer:{aiAnswer}");
-
-                if (!IsMostlyRussian(aiAnswer))
-                {
-                    aiAnswer = await _translation.TranslateEngtoRu(aiAnswer);
-                }
-
-                _movement.StartWinkAnimation();
-                _movement.OpenMouth();
-                //var synthesizer = new SpeechSynthesizer();//TODO REWRITE IT TO ANOTHER TTS!!!!!!!!!!!!!
-
-                //synthesizer.SelectVoice("Microsoft Irina Desktop");
-
-                //synthesizer.Speak($"{messageToProcess.Role} {aiAnswer}");
-
-                Debug.WriteLine($"Ai answer:{aiAnswer} on user {messageToProcess.Message}");
-                _voice.Speak($"{aiAnswer}");//TODO ADD THERE NICKNAME
-                //_voice.Speak($"{messageToProcess.Role} {aiAnswer}");
-                //_idleTimer.Change(_idleInterval, Timeout.InfiniteTimeSpan);//Todo think about deleting idle timer 
-
-                _movement.CloseMouth();
-
-                _memory.StopProcessing();
-            }
-        }
-
         public void Dispose()
         {
             _timer.Dispose();
+            _semaphore.Dispose();
         }
     }
 }
