@@ -2,31 +2,36 @@
 
 namespace HepaticaAI.Core.Interfaces.Memory
 {
-        public interface IMemory
-        {
-                void AddEntry(string role, string message);
+    public interface IMemory
+    {
+        void AddEntry(string role, string message);
 
-                void AddUserRoleToStopSequenceIfMissing(string role);
-                List<string> GetStopSequence();
+        void AddUserRoleToStopSequenceIfMissing(string role);
+        List<string> GetStopSequence();
+        void DeleteLastMessage();
 
-                void DeleteLastMessage();
+        void AddEntryToProcessInQueue(string role, string message);
 
-                void AddEntryToProcessInQueue(string role, string message);
+        void AddVoiceEntryToProcessInQueue(string role, string message);
 
-                string GetFormattedPrompt();
+        string GetFormattedPrompt();
 
-                string GetFormattedPromptWithoutMemoryForgeting();
+        string GetFormattedPromptWithoutMemoryForgeting();
 
-                void Clear();
+        void Clear();
 
-                bool HasMessagesToProcess();
+        bool HasMessagesToProcess();
 
-                bool IsNotCurrentlyProcessingMessage();
+        public bool HasVoiceMessagesToProcess()
 
-                void StartProcessing();
+        bool IsNotCurrentlyProcessingMessage();
 
-                void StopProcessing();
+        void StartProcessing();
 
-                MessageEntry GetMessageToProcess();
-        }
+        void StopProcessing();
+
+        MessageEntry GetMessageToProcess();
+
+        List<MessageEntry> GetVoiceMessagesToProcess();
+    }
 }

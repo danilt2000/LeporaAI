@@ -34,7 +34,7 @@ namespace HepaticaAI.WPFClient
             ServiceProvider = serviceCollection.BuildServiceProvider();
             var aiLifecycleFacade = ServiceProvider.GetRequiredService<AILifecycleFacade>();
             await aiLifecycleFacade.StartLife();
-            _ = ServiceProvider.GetRequiredService<MessageProcessorSelector>();
+            //_ = ServiceProvider.GetRequiredService<MessageProcessorSelector>();
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
 

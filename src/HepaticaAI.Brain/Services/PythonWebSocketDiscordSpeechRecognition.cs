@@ -5,6 +5,7 @@ using System.Text.Json;
 using HepaticaAI.Core.Interfaces.SpeechRecognition;
 using HepaticaAI.Core.Interfaces.Memory;
 using HepaticaAI.Brain.Models;
+using HepaticaAI.Core;
 
 namespace HepaticaAI.Brain.Services;
 
@@ -13,23 +14,20 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
     private ClientWebSocket _ws;
     private readonly Uri _serverUri = new Uri("ws://localhost:8765");
     private readonly IMemory _memory;
+    private readonly MessageProcessorSelector _messageProcessorSelector;
     private readonly CancellationTokenSource _cts = new();
 
-    public PythonWebSocketDiscordSpeechRecognition(IMemory memory)
+    public PythonWebSocketDiscordSpeechRecognition(IMemory memory, MessageProcessorSelector messageProcessorSelector)
     {
         _memory = memory;
+        _messageProcessorSelector = messageProcessorSelector;
         _ws = new ClientWebSocket();
     }
 
-    public Task Initialize()
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Start() 
+    public void Start()
     {
         Debug.WriteLine("🚀 Starting WebSocket in background...");
-        Task.Run(() => RunWebSocket(_cts.Token)); 
+        Task.Run(() => RunWebSocket(_cts.Token));
     }
 
     private async Task RunWebSocket(CancellationToken token)
@@ -85,13 +83,19 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
 
                 var data = JsonSerializer.Deserialize<SpeechResultDiscordWebSocket>(receivedMessage);
 
-                if (!string.IsNullOrEmpty(data?.result))
+                if (data?.type == "Intermediate speech")
+                {
+                    Debug.WriteLine($"📥 Received: {data.user}, {data.result}");
+
+                    _messageProcessorSelector.SetFalseIsNotPlayingIntermediateSpeech();
+                }
+                else if (!string.IsNullOrEmpty(data?.result))
                 {
                     Debug.WriteLine($"📥 Received: {data.user}, {data.result}");
 
                     //Todo apply there function GetUsernameByIdAsync for discord username 
 
-                    _memory.AddEntryToProcessInQueue(data.user.ToString(), data.result);
+                    _memory.AddVoiceEntryToProcessInQueue(data.user.ToString(), data.result);
                 }
             }
             catch (Exception ex)

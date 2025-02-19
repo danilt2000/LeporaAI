@@ -16,7 +16,10 @@ namespace HepaticaAI.Brain.Services
 
         private readonly List<(string Role, string Message)> _history = new();
 
-        internal readonly List<(string Role, string Message)> _unprocessedMessagesQueue = new();
+        internal readonly List<(string Role, string Message)> _unprocessedChatMessagesQueue = new();
+
+        internal readonly List<MessageEntry> _unprocessedVoiceChatMessagesQueue = new();
+
         private static readonly List<string> DefaultStopSequence = ["```", ")", "(", "[", "]", "**", "*"];
 
         private static List<string> _stopSequence = DefaultStopSequence;
@@ -48,9 +51,14 @@ namespace HepaticaAI.Brain.Services
             _history.RemoveAt(_history.Count - 1);
         }
 
-        public void AddEntryToProcessInQueue(string role, string message)//Todo ADD PROCESSING OF STOP SEQUENCES FOR NEW PEOPLE IN MEMORY
+        public void AddEntryToProcessInQueue(string role, string message)
         {
-            _unprocessedMessagesQueue.Add((role, message));
+            _unprocessedChatMessagesQueue.Add((role, message));
+        }
+
+        public void AddVoiceEntryToProcessInQueue(string role, string message)
+        {
+            _unprocessedVoiceChatMessagesQueue.Add(new MessageEntry(role, message));
         }
 
         public string GetFormattedPrompt()
@@ -101,14 +109,21 @@ namespace HepaticaAI.Brain.Services
         {
             _history.Clear();
 
-            _unprocessedMessagesQueue.Clear();
+            _unprocessedChatMessagesQueue.Clear();
+
+            _unprocessedVoiceChatMessagesQueue.Clear();
 
             _stopSequence = DefaultStopSequence;
         }
 
         public bool HasMessagesToProcess()
         {
-            return _unprocessedMessagesQueue.Count != 0;
+            return _unprocessedChatMessagesQueue.Count != 0;
+        }
+
+        public bool HasVoiceMessagesToProcess()
+        {
+            return _unprocessedVoiceChatMessagesQueue.Count != 0;
         }
 
         public bool IsNotCurrentlyProcessingMessage()
@@ -128,11 +143,20 @@ namespace HepaticaAI.Brain.Services
 
         public MessageEntry GetMessageToProcess()
         {
-            var entity = _unprocessedMessagesQueue.First();
+            var entity = _unprocessedChatMessagesQueue.First();
 
-            _unprocessedMessagesQueue.RemoveAt(0);
+            _unprocessedChatMessagesQueue.RemoveAt(0);
 
             return new MessageEntry(entity.Role, entity.Message);
+        }
+
+        public List<MessageEntry> GetVoiceMessagesToProcess()
+        {
+            var entities = new List<MessageEntry>(_unprocessedVoiceChatMessagesQueue);
+
+            _unprocessedVoiceChatMessagesQueue.Clear();
+
+            return entities;
         }
     }
 }

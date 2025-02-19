@@ -6,6 +6,7 @@ using HepaticaAI.Core.Interfaces.Voice;
 using HepaticaAI.Core.Models.Messages;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Text.RegularExpressions;
 using HepaticaAI.Core.Models;
 
@@ -20,9 +21,21 @@ namespace HepaticaAI.Core
         private readonly IVoiceSynthesis _voice;
         private readonly Timer _timer;
         private readonly SemaphoreSlim _semaphore = new(5);
-        private readonly ConcurrentQueue<(Guid, MessageEntry)> _messageQueue = new();
-        private readonly ConcurrentDictionary<Guid, MessageForVoiceToProcess> _generatedResponses = new();
+        private readonly ConcurrentQueue<(Guid, MessageEntry)> _chatMessageQueue = new();//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
+        private readonly List<MessageEntry> _voiceChatMessageQueue = new();//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
+        private readonly ConcurrentDictionary<Guid, MessageForVoiceToProcess> _generatedResponses = new();//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
         private readonly TimeSpan _interval = TimeSpan.FromSeconds(1);
+
+        public bool IsNotPlayingIntermediateOrFinalSpeech { get; set; } = true;
+
+        public DateTime LastIsNotPlayingIntermediateOrFinalSpeechChange { get; set; } = DateTime.MinValue;
+
+        public void SetFalseIsNotPlayingIntermediateSpeech()
+        {
+            IsNotPlayingIntermediateOrFinalSpeech = false;
+
+            LastIsNotPlayingIntermediateOrFinalSpeechChange = DateTime.UtcNow;
+        }
 
         public MessageProcessorSelector(IMemory memory, ILLMClient llmClient, ITranslation translation, IMovement movement, IVoiceSynthesis voice)
         {
@@ -31,18 +44,51 @@ namespace HepaticaAI.Core
             _translation = translation;
             _movement = movement;
             _voice = voice;
-            _timer = new Timer(EnqueueMessages, null, TimeSpan.Zero, _interval);
+            //_timer = new Timer(EnqueueMessages, null, TimeSpan.Zero, _interval);
+            //_timer = new Timer(EnqueueVoiceMessages, null, TimeSpan.Zero, _interval);
+            //_timer = new Timer(UpdateIsNotPlayingIntermediateOrFinalSpeechState, null, TimeSpan.Zero, _interval);
+            _timer = new Timer(TimerCallback, null, TimeSpan.Zero, _interval);
+
             Task.Run(ProcessMessagesAsync);
             Task.Run(SpeakNextMessage);
         }
 
+        public void Start()
+        {
+
+        }
+
+        private void TimerCallback(object? state)
+        {
+            EnqueueMessages(state);
+            EnqueueVoiceMessages(state);
+            UpdateIsNotPlayingIntermediateOrFinalSpeechState(state);
+        }
+
+        private void UpdateIsNotPlayingIntermediateOrFinalSpeechState(object? state)
+        {
+            if ((DateTime.UtcNow - LastIsNotPlayingIntermediateOrFinalSpeechChange).TotalSeconds > 2)
+                IsNotPlayingIntermediateOrFinalSpeech = true;
+            else
+                IsNotPlayingIntermediateOrFinalSpeech = false;
+        }
+
+        private void EnqueueVoiceMessages(object? state)
+        {
+            if (_memory.HasVoiceMessagesToProcess())
+            {
+                var voiceMessagesToProcess = new List<MessageEntry>(_memory.GetVoiceMessagesToProcess());
+                _voiceChatMessageQueue.AddRange(voiceMessagesToProcess);
+            }
+        }
+
         private void EnqueueMessages(object? state)
         {
-            while (_memory.HasMessagesToProcess())
+            if (_memory.HasMessagesToProcess())//Todo test it 
             {
-                var messageToProcess = _memory.GetMessageToProcess();
-                var messageId = Guid.NewGuid();
-                _messageQueue.Enqueue((messageId, messageToProcess));
+                var chatMessageToProcess = _memory.GetMessageToProcess();
+                var chatMessageId = Guid.NewGuid();
+                _chatMessageQueue.Enqueue((chatMessageId, chatMessageToProcess));
             }
         }
 
@@ -53,14 +99,13 @@ namespace HepaticaAI.Core
                 await _semaphore.WaitAsync();
                 try
                 {
-                    if (_messageQueue.TryDequeue(out var message))
+                    if (_chatMessageQueue.TryDequeue(out var message))
                     {
                         var (messageId, messageToProcess) = message;
 
                         Debug.WriteLine($"Processing message {messageId}: {messageToProcess.Message}");
 
-                        string aiAnswer =
-                            await _llmClient.GenerateAsync(messageToProcess.Role, messageToProcess.Message);
+                        string aiAnswer = await _llmClient.GenerateAsync(messageToProcess.Role, messageToProcess.Message);
 
                         if (!IsMostlyRussian(aiAnswer))
                             aiAnswer = await _translation.TranslateEngtoRu(aiAnswer);
@@ -69,6 +114,21 @@ namespace HepaticaAI.Core
                         { AiMessage = aiAnswer, UserMessage = messageToProcess.Message };
 
                         Debug.WriteLine($"Generated AI response {messageId}: {aiAnswer}");
+                    }
+                    else if (_voiceChatMessageQueue.Count != 0 && IsNotPlayingIntermediateOrFinalSpeech)
+                    {
+                        var allVoiceMessages = new List<MessageEntry>(_voiceChatMessageQueue);
+
+                        _voiceChatMessageQueue.Clear();
+
+                        //TODO IMPLEMENT VOICE CHAT SPEAK VIA DISCORD AND IMPLEMENT GENERATE ASYNC FUNCTION 
+                        string aiAnswer = await _llmClient.GenerateAsync(allVoiceMessages);
+
+                        if (!IsMostlyRussian(aiAnswer))
+                            aiAnswer = await _translation.TranslateEngtoRu(aiAnswer);
+
+
+                        Debug.WriteLine($"Generated AI response");
                     }
                 }
                 catch (Exception ex)
@@ -92,8 +152,6 @@ namespace HepaticaAI.Core
                 {
                     if (_generatedResponses.TryRemove(messageId, out var aiAnswer))
                     {
-                        Debug.WriteLine($"Speaking message {messageId}: {aiAnswer}");
-
                         _movement.StartWinkAnimation();
                         _movement.OpenMouth();
                         Debug.WriteLine($"User message {aiAnswer.UserMessage}: ai answer {aiAnswer.AiMessage}");

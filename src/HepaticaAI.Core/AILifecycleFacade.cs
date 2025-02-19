@@ -5,13 +5,15 @@ using HepaticaAI.Core.Interfaces.Vision;
 
 namespace HepaticaAI.Core
 {
-    public class AILifecycleFacade(ILLMClient llmClient, IChatClient chatClient, IMovement movement, ISpeechRecognition speechRecognition)
+    public class AILifecycleFacade(ILLMClient llmClient, IChatClient chatClient, IMovement movement, ISpeechRecognition speechRecognition, MessageProcessorSelector messageProcessorSelector)
     {
         public async Task StartLife()
         {
             //llmClient.Dispose();
 
             //llmClient.Initialize();
+
+            messageProcessorSelector.Start();
 
             movement.Initialize();
 

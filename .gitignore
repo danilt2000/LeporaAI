@@ -372,3 +372,4 @@ FodyWeavers.xsd
 /tests/HepaticaAI.Vision.Tests/appsettings.json
 /src/HepaticaAI.Brain/ggml-base.bin
 /src/HepaticaAI.Brain/ffmpeg.exe
+/Discord-AI-With-STT/sinks/.env

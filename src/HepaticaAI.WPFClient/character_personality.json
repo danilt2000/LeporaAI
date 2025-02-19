@@ -1,7 +1,7 @@
 {
 	"n": 1,
 	"max_context_length": 16384,
-	"max_length": 200,
+	"max_length": 1000,
 	"rep_pen": 1.2,
 	"temperature": 0.75,
 	"top_p": 0.85,

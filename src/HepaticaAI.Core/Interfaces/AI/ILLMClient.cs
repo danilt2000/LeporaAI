@@ -1,9 +1,13 @@
-﻿namespace HepaticaAI.Core.Interfaces.AI
-{
-        public interface ILLMClient : IDisposable
-        {
-                void Initialize();
+﻿using HepaticaAI.Core.Models.Messages;
 
-                Task<string> GenerateAsync(string personality, string prompt);
-        }
+namespace HepaticaAI.Core.Interfaces.AI
+{
+    public interface ILLMClient : IDisposable
+    {
+        void Initialize();
+
+        Task<string> GenerateAsync(string personality, string prompt);
+
+        Task<string> GenerateAsync(List<MessageEntry> messages);
+    }
 }
