@@ -7,15 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="character_personality.json" />
     <None Remove="Services\temp_character_personality.json" />
+    <None Remove="spdonatefilestorage-aac0856728b9.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="..\..\src\HepaticaAI.WPFClient\appsettings.json" Link="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="character_personality.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Services\temp_character_personality.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="spdonatefilestorage-aac0856728b9.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="temp_character_personality.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -23,6 +31,7 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />

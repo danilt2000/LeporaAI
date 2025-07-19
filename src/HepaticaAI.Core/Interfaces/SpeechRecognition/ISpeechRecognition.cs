@@ -3,5 +3,7 @@
     public interface ISpeechRecognition
     {
         void Start();
+        
+        Task SendMessageAsync(string message);
     }
 }

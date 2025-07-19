@@ -1,11 +1,11 @@
-﻿using System.Diagnostics;
+﻿using HepaticaAI.Brain.Models;
+using HepaticaAI.Core;
+using HepaticaAI.Core.Interfaces.Memory;
+using HepaticaAI.Core.Interfaces.SpeechRecognition;
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using HepaticaAI.Core.Interfaces.SpeechRecognition;
-using HepaticaAI.Core.Interfaces.Memory;
-using HepaticaAI.Brain.Models;
-using HepaticaAI.Core;
 
 namespace HepaticaAI.Brain.Services;
 
@@ -16,6 +16,8 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
     private readonly IMemory _memory;
     private readonly MessageProcessorSelector _messageProcessorSelector;
     private readonly CancellationTokenSource _cts = new();
+    private readonly TimeSpan _interval = TimeSpan.FromMilliseconds(200);
+    private Timer _timer;
 
     public PythonWebSocketDiscordSpeechRecognition(IMemory memory, MessageProcessorSelector messageProcessorSelector)
     {
@@ -24,9 +26,25 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
         _ws = new ClientWebSocket();
     }
 
+    private async void TimerCallback(object? state)
+    {
+        await SpeakMessageIfFilePathExist(state);
+    }
+
+    private async Task SpeakMessageIfFilePathExist(object? state)
+    {
+        if (!string.IsNullOrEmpty(_messageProcessorSelector.CurrentSpeakAudioPath))
+        {
+            await SendMessageAsync(_messageProcessorSelector.CurrentSpeakAudioPath);
+
+            _messageProcessorSelector.CurrentSpeakAudioPath = string.Empty;
+        }
+    }
+
     public void Start()
     {
         Debug.WriteLine("🚀 Starting WebSocket in background...");
+        _timer = new Timer(TimerCallback, null, TimeSpan.Zero, _interval);
         Task.Run(() => RunWebSocket(_cts.Token));
     }
 
@@ -61,6 +79,8 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
         Debug.WriteLine("✅ WebSocket connected");
     }
 
+    private readonly Dictionary<long, (string Message, DateTime Timestamp)> _recentMessages = new();
+
     private async Task ReceiveMessages(CancellationToken token)
     {
         byte[] receiveBuffer = new byte[1024];
@@ -87,6 +107,12 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
                 {
                     Debug.WriteLine($"📥 Received: {data.user}, {data.result}");
 
+                    if (IsDuplicateMessage(data.user, data.result!))
+                    {
+                        Debug.WriteLine($"⚠️ Duplicate message detected from {data.user}. Sending stop signal.");
+                        await SendStopSignal();
+                    }
+
                     _messageProcessorSelector.SetFalseIsNotPlayingIntermediateSpeech();
                 }
                 else if (!string.IsNullOrEmpty(data?.result))
@@ -104,6 +130,48 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
                 break;
             }
         }
+    }
+
+    public async Task SendMessageAsync(string message)
+    {
+        if (_ws.State != WebSocketState.Open)
+        {
+            Debug.WriteLine("⚠️ WebSocket is not connected. Unable to send message.");
+            return;
+        }
+
+        try
+        {
+            byte[] encodedMessage = Encoding.UTF8.GetBytes(message);
+            await _ws.SendAsync(new ArraySegment<byte>(encodedMessage), WebSocketMessageType.Text, true, CancellationToken.None);
+            Debug.WriteLine($"📤 Sent: {message}");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ Send error: {ex.Message}");
+        }
+    }
+
+    private bool IsDuplicateMessage(long user, string message)
+    {
+        if (_recentMessages.TryGetValue(user, out var entry) && entry.Message == message)
+        {
+            if ((DateTime.UtcNow - entry.Timestamp).TotalSeconds <= InteruptinIntervalInSeconds)
+            {
+                return true;
+            }
+        }
+        _recentMessages[user] = (message, DateTime.UtcNow);
+        return false;
+    }
+
+    private static int InteruptinIntervalInSeconds => 1;
+
+    private async Task SendStopSignal()
+    {
+        var stopMessage = "STOP";
+
+        await SendMessageAsync(stopMessage);
     }
 
     public void Stop()

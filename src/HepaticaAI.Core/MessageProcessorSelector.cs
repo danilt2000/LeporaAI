@@ -1,14 +1,14 @@
 ﻿using HepaticaAI.Core.Interfaces.AI;
 using HepaticaAI.Core.Interfaces.Memory;
 using HepaticaAI.Core.Interfaces.Movement;
+using HepaticaAI.Core.Interfaces.SpeechRecognition;
 using HepaticaAI.Core.Interfaces.Translations;
 using HepaticaAI.Core.Interfaces.Voice;
+using HepaticaAI.Core.Models;
 using HepaticaAI.Core.Models.Messages;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Dynamic;
 using System.Text.RegularExpressions;
-using HepaticaAI.Core.Models;
 
 namespace HepaticaAI.Core
 {
@@ -19,11 +19,13 @@ namespace HepaticaAI.Core
         private readonly ITranslation _translation;
         private readonly IMovement _movement;
         private readonly IVoiceSynthesis _voice;
+        private readonly ISpeechRecognition _speechRecognition;
         private readonly Timer _timer;
         private readonly SemaphoreSlim _semaphore = new(5);
         private readonly ConcurrentQueue<(Guid, MessageEntry)> _chatMessageQueue = new();//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
         private readonly List<MessageEntry> _voiceChatMessageQueue = new();//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
-        private readonly ConcurrentDictionary<Guid, MessageForVoiceToProcess> _generatedResponses = new();//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
+        private readonly ConcurrentDictionary<Guid, MessageForVoiceToProcess> _generatedChatResponses = new();//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
+        public string CurrentSpeakAudioPath = string.Empty;//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
         private readonly TimeSpan _interval = TimeSpan.FromSeconds(1);
 
         public bool IsNotPlayingIntermediateOrFinalSpeech { get; set; } = true;
@@ -37,13 +39,14 @@ namespace HepaticaAI.Core
             LastIsNotPlayingIntermediateOrFinalSpeechChange = DateTime.UtcNow;
         }
 
-        public MessageProcessorSelector(IMemory memory, ILLMClient llmClient, ITranslation translation, IMovement movement, IVoiceSynthesis voice)
+        public MessageProcessorSelector(IMemory memory, ILLMClient llmClient, ITranslation translation, IMovement movement, IVoiceSynthesis voice/*, ISpeechRecognition speechRecognition*/)
         {
             _memory = memory;
             _llmClient = llmClient;
             _translation = translation;
             _movement = movement;
             _voice = voice;
+            //_speechRecognition = speechRecognition;
             //_timer = new Timer(EnqueueMessages, null, TimeSpan.Zero, _interval);
             //_timer = new Timer(EnqueueVoiceMessages, null, TimeSpan.Zero, _interval);
             //_timer = new Timer(UpdateIsNotPlayingIntermediateOrFinalSpeechState, null, TimeSpan.Zero, _interval);
@@ -67,7 +70,7 @@ namespace HepaticaAI.Core
 
         private void UpdateIsNotPlayingIntermediateOrFinalSpeechState(object? state)
         {
-            if ((DateTime.UtcNow - LastIsNotPlayingIntermediateOrFinalSpeechChange).TotalSeconds > 2)
+            if ((DateTime.UtcNow - LastIsNotPlayingIntermediateOrFinalSpeechChange).TotalSeconds > 3)
                 IsNotPlayingIntermediateOrFinalSpeech = true;
             else
                 IsNotPlayingIntermediateOrFinalSpeech = false;
@@ -110,7 +113,7 @@ namespace HepaticaAI.Core
                         if (!IsMostlyRussian(aiAnswer))
                             aiAnswer = await _translation.TranslateEngtoRu(aiAnswer);
 
-                        _generatedResponses[messageId] = new MessageForVoiceToProcess()
+                        _generatedChatResponses[messageId] = new MessageForVoiceToProcess()
                         { AiMessage = aiAnswer, UserMessage = messageToProcess.Message };
 
                         Debug.WriteLine($"Generated AI response {messageId}: {aiAnswer}");
@@ -122,11 +125,16 @@ namespace HepaticaAI.Core
                         _voiceChatMessageQueue.Clear();
 
                         //TODO IMPLEMENT VOICE CHAT SPEAK VIA DISCORD AND IMPLEMENT GENERATE ASYNC FUNCTION 
-                        string aiAnswer = await _llmClient.GenerateAsync(allVoiceMessages);
+                        var aiAnswer = await _llmClient.GenerateAsync(allVoiceMessages);
 
                         if (!IsMostlyRussian(aiAnswer))
                             aiAnswer = await _translation.TranslateEngtoRu(aiAnswer);
 
+                        //var speakAudioPath = _voice.GenerateSpeakAudioAndGetFilePath("TEST TEST TEST");
+                        var speakAudioPath = _voice.GenerateSpeakAudioAndGetFilePath(aiAnswer);
+
+                        CurrentSpeakAudioPath = speakAudioPath;
+                        //await _speechRecognition.SendMessageAsync("TEST TEST TEST");
 
                         Debug.WriteLine($"Generated AI response");
                     }
@@ -148,9 +156,9 @@ namespace HepaticaAI.Core
         {
             while (true)
             {
-                foreach (var messageId in _generatedResponses.Keys)
+                foreach (var messageId in _generatedChatResponses.Keys)
                 {
-                    if (_generatedResponses.TryRemove(messageId, out var aiAnswer))
+                    if (_generatedChatResponses.TryRemove(messageId, out var aiAnswer))
                     {
                         _movement.StartWinkAnimation();
                         _movement.OpenMouth();

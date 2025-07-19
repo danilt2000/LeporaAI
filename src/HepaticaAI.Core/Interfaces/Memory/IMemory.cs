@@ -22,7 +22,7 @@ namespace HepaticaAI.Core.Interfaces.Memory
 
         bool HasMessagesToProcess();
 
-        public bool HasVoiceMessagesToProcess()
+        public bool HasVoiceMessagesToProcess();
 
         bool IsNotCurrentlyProcessingMessage();
 

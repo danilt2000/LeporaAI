@@ -20,7 +20,9 @@ namespace HepaticaAI.Brain.Services
 
         internal readonly List<MessageEntry> _unprocessedVoiceChatMessagesQueue = new();
 
-        private static readonly List<string> DefaultStopSequence = ["```", ")", "(", "[", "]", "**", "*"];
+        //private static readonly List<string> DefaultStopSequence = new List<string>();
+        private static readonly List<string> DefaultStopSequence = ["```", ")", "(", "[", "]", "**", "*", "\n", "\\n"];//Todo uncommit
+        //private static readonly List<string> DefaultStopSequence = ["```", ")", "(", "[", "]", "**", "*"];//Todo uncommit
 
         private static List<string> _stopSequence = DefaultStopSequence;
 
@@ -65,7 +67,8 @@ namespace HepaticaAI.Brain.Services
         {
             var sb = new StringBuilder();
 
-            int startIndex = Math.Max(0, _history.Count - 14);
+            int startIndex = Math.Max(0, _history.Count - 20);
+            //int startIndex = Math.Max(0, _history.Count - 14);
 
             for (int i = startIndex; i < _history.Count; i++)
             {

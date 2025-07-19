@@ -116,9 +116,9 @@ namespace HepaticaAI.Movement.Services
                 Console.WriteLine("Authentication successful!");
                 SendRequestGetCurrentModelId();
                 SendRequestGetHotkeysInCurrentModel();
-                //StartSmoothMovement();//Todo uncommit if it will be needed
-                //StartTargetUpdateTimer();
-                //StartRightLookTimers();
+                StartSmoothMovement();//Todo uncommit if it will be needed
+                StartTargetUpdateTimer();
+                StartRightLookTimers();
             }
             else
             {
@@ -133,7 +133,7 @@ namespace HepaticaAI.Movement.Services
                 if (!isAuthenticated) return;
 
                 currentX = Lerp(currentX, targetX, SMOOTHING_FACTOR);
-                currentY = Lerp(currentY, targetY, SMOOTHING_FACTOR);
+                //currentY = Lerp(currentY, targetY, SMOOTHING_FACTOR);//TODO THINK ABOUT APPLYING IT 
                 currentZ = Lerp(currentZ, targetZ, SMOOTHING_FACTOR);
 
                 SendMovementCommand();

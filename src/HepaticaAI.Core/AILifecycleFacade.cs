@@ -11,13 +11,13 @@ namespace HepaticaAI.Core
         {
             //llmClient.Dispose();
 
-            //llmClient.Initialize();
+            //llmClient.Initialize();//TODO REWRITE TO ANOTHER LLM or use server api
 
             messageProcessorSelector.Start();
 
             movement.Initialize();
 
-            chatClient.Connect();//Todo add possibility to disable chat listening
+            //chatClient.Connect();//Todo add possibility to disable chat listening
 
             speechRecognition.Start();
         }
