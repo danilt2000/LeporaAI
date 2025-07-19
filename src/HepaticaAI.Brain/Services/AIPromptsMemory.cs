@@ -14,9 +14,9 @@ namespace HepaticaAI.Brain.Services
         //    ("\nLeporaAI", "")
         //];
 
-        private readonly List<(string Role, string Message)> _history = new();
+        private readonly List<MessageEntry> _history = new();
 
-        internal readonly List<(string Role, string Message)> _unprocessedChatMessagesQueue = new();
+        internal readonly List<MessageEntry> _unprocessedChatMessagesQueue = new();
 
         internal readonly List<MessageEntry> _unprocessedVoiceChatMessagesQueue = new();
 
@@ -28,9 +28,14 @@ namespace HepaticaAI.Brain.Services
 
         private bool _isProcessing = false;
 
-        public void AddEntry(string role, string message)//Todo ADD PROCESSING OF STOP SEQUENCES FOR NEW PEOPLE IN MEMORY
+        public void AddEntity(string role, string message)//Todo ADD PROCESSING OF STOP SEQUENCES FOR NEW PEOPLE IN MEMORY
         {
-            _history.Add((role, message));
+            _history.Add(new MessageEntry(role, message));
+        }
+
+        public void AddEntities(List<MessageEntry> messages)
+        {
+            _history.AddRange(messages);
         }
 
         public void AddUserRoleToStopSequenceIfMissing(string role)
@@ -55,7 +60,7 @@ namespace HepaticaAI.Brain.Services
 
         public void AddEntryToProcessInQueue(string role, string message)
         {
-            _unprocessedChatMessagesQueue.Add((role, message));
+            _unprocessedChatMessagesQueue.Add(new MessageEntry(role, message));
         }
 
         public void AddVoiceEntryToProcessInQueue(string role, string message)
@@ -151,6 +156,15 @@ namespace HepaticaAI.Brain.Services
             _unprocessedChatMessagesQueue.RemoveAt(0);
 
             return new MessageEntry(entity.Role, entity.Message);
+        }
+
+        public List<MessageEntry> GetChatMessagesToProcess()
+        {
+            var entities = new List<MessageEntry>(_unprocessedChatMessagesQueue);
+
+            _unprocessedChatMessagesQueue.Clear();
+
+            return entities;
         }
 
         public List<MessageEntry> GetVoiceMessagesToProcess()

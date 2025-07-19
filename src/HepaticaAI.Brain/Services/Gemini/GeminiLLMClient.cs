@@ -1,7 +1,9 @@
-﻿using HepaticaAI.Core.Interfaces.AI;
+﻿using HepaticaAI.Brain.Models;
+using HepaticaAI.Core.Interfaces.AI;
 using HepaticaAI.Core.Interfaces.Memory;
 using HepaticaAI.Core.Models.Messages;
 using Microsoft.Extensions.Configuration;
+using System.Speech.Synthesis;
 
 namespace HepaticaAI.Brain.Services.Gemini
 {
@@ -23,9 +25,15 @@ namespace HepaticaAI.Brain.Services.Gemini
             return result;
         }
 
-        public Task<string> GenerateAsync(List<MessageEntry> messages)
+        public async Task<string> GenerateAsync(List<MessageEntry> messages)
         {
-            throw new NotImplementedException();
+            var savedMessages = memory.GetFormattedPrompt();
+
+            var combinedText = string.Join(" :", messages.Select(m => $"{m.Role}:{m.Message}"));
+            var result = await geminiApiService.SummarizeAsync(savedMessages + combinedText);
+
+            memory.AddEntity("LeporaAI", result);
+            return result;
         }
     }
 }

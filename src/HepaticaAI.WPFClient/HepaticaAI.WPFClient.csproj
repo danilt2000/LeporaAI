@@ -44,9 +44,6 @@
     <Content Include="LeporaDiscordPicture.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="spdonatefilestorage-aac0856728b9.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>

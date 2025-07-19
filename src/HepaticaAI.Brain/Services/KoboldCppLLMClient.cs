@@ -21,14 +21,14 @@ namespace HepaticaAI.Brain.Services
         {
             try
             {
-                memory.AddEntry(personality, prompt);
+                memory.AddEntity(personality, prompt);
 
                 var characterPersonality = JsonSerializer.Deserialize<Personality>(await File.ReadAllTextAsync("character_personality.json"));
                 var aiUrl = configuration["AiUrl"];
                 var aiMainCharacterName = systemPromptsUpdater.GetCharacterName();//Todo TEST IT 
                 //var aiMainCharacterName = configuration["AiMainCharacterName"];
 
-                memory.AddEntry(aiMainCharacterName!, string.Empty);
+                memory.AddEntity(aiMainCharacterName!, string.Empty);
 
                 //string promptToSend = memory.GetFormattedPrompt();
                 //string promptToSend = $"[{aiMainCharacterName} responds playfully]\n" + memory.GetFormattedPrompt();
@@ -64,7 +64,7 @@ namespace HepaticaAI.Brain.Services
 
                 memory.DeleteLastMessage();
 
-                memory.AddEntry(aiMainCharacterName!, responseContentText);
+                memory.AddEntity(aiMainCharacterName!, responseContentText);
 
                 return responseContentText;
             }
@@ -82,7 +82,7 @@ namespace HepaticaAI.Brain.Services
             {
                 foreach (var message in messages)
                 {
-                    memory.AddEntry(message.Role, message.Message);
+                    memory.AddEntity(message.Role, message.Message);
                 }
 
                 var characterPersonality = JsonSerializer.Deserialize<Personality>(await File.ReadAllTextAsync("character_personality.json"));
@@ -90,7 +90,7 @@ namespace HepaticaAI.Brain.Services
                 var aiMainCharacterName = systemPromptsUpdater.GetCharacterName();//Todo TEST IT 
                 //var aiMainCharacterName = "LeporaAI";
 
-                memory.AddEntry(aiMainCharacterName!, string.Empty);
+                memory.AddEntity(aiMainCharacterName!, string.Empty);
 
                 //string promptToSend = memory.GetFormattedPrompt();
                 //string promptToSend = $"[{aiMainCharacterName} responds playfully]\n" + memory.GetFormattedPrompt();
@@ -130,7 +130,7 @@ namespace HepaticaAI.Brain.Services
 
                 memory.DeleteLastMessage();
 
-                memory.AddEntry(aiMainCharacterName!, responseContentText);
+                memory.AddEntity(aiMainCharacterName!, responseContentText);
 
                 return responseContentText;
             }

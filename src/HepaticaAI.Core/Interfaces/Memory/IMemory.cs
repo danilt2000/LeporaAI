@@ -4,7 +4,9 @@ namespace HepaticaAI.Core.Interfaces.Memory
 {
     public interface IMemory
     {
-        void AddEntry(string role, string message);
+        void AddEntity(string role, string message);
+
+        public void AddEntities(List<MessageEntry> messages);
 
         void AddUserRoleToStopSequenceIfMissing(string role);
         List<string> GetStopSequence();
@@ -31,6 +33,8 @@ namespace HepaticaAI.Core.Interfaces.Memory
         void StopProcessing();
 
         MessageEntry GetMessageToProcess();
+        
+        List<MessageEntry> GetChatMessagesToProcess();
 
         List<MessageEntry> GetVoiceMessagesToProcess();
     }

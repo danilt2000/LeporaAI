@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace HepaticaAI.Core
 {
-    public class MessageProcessorSelector : IDisposable
+    public class VoiceMessageProcessorSelector : IDisposable
     {
         private readonly IMemory _memory;
         private readonly ILLMClient _llmClient;
@@ -39,7 +39,7 @@ namespace HepaticaAI.Core
             LastIsNotPlayingIntermediateOrFinalSpeechChange = DateTime.UtcNow;
         }
 
-        public MessageProcessorSelector(IMemory memory, ILLMClient llmClient, ITranslation translation, IMovement movement, IVoiceSynthesis voice/*, ISpeechRecognition speechRecognition*/)
+        public VoiceMessageProcessorSelector(IMemory memory, ILLMClient llmClient, ITranslation translation, IMovement movement, IVoiceSynthesis voice/*, ISpeechRecognition speechRecognition*/)
         {
             _memory = memory;
             _llmClient = llmClient;

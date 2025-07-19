@@ -14,15 +14,15 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
     private ClientWebSocket _ws;
     private readonly Uri _serverUri = new Uri("ws://localhost:8765");
     private readonly IMemory _memory;
-    private readonly MessageProcessorSelector _messageProcessorSelector;
+    private readonly VoiceMessageProcessorSelector _voiceMessageProcessorSelector;
     private readonly CancellationTokenSource _cts = new();
     private readonly TimeSpan _interval = TimeSpan.FromMilliseconds(200);
     private Timer _timer;
 
-    public PythonWebSocketDiscordSpeechRecognition(IMemory memory, MessageProcessorSelector messageProcessorSelector)
+    public PythonWebSocketDiscordSpeechRecognition(IMemory memory, VoiceMessageProcessorSelector voiceMessageProcessorSelector)
     {
         _memory = memory;
-        _messageProcessorSelector = messageProcessorSelector;
+        _voiceMessageProcessorSelector = voiceMessageProcessorSelector;
         _ws = new ClientWebSocket();
     }
 
@@ -33,11 +33,11 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
 
     private async Task SpeakMessageIfFilePathExist(object? state)
     {
-        if (!string.IsNullOrEmpty(_messageProcessorSelector.CurrentSpeakAudioPath))
+        if (!string.IsNullOrEmpty(_voiceMessageProcessorSelector.CurrentSpeakAudioPath))
         {
-            await SendMessageAsync(_messageProcessorSelector.CurrentSpeakAudioPath);
+            await SendMessageAsync(_voiceMessageProcessorSelector.CurrentSpeakAudioPath);
 
-            _messageProcessorSelector.CurrentSpeakAudioPath = string.Empty;
+            _voiceMessageProcessorSelector.CurrentSpeakAudioPath = string.Empty;
         }
     }
 
@@ -113,7 +113,7 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
                         await SendStopSignal();
                     }
 
-                    _messageProcessorSelector.SetFalseIsNotPlayingIntermediateSpeech();
+                    _voiceMessageProcessorSelector.SetFalseIsNotPlayingIntermediateSpeech();
                 }
                 else if (!string.IsNullOrEmpty(data?.result))
                 {

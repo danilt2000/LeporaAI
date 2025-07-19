@@ -5,7 +5,8 @@ using HepaticaAI.Core.Interfaces.Vision;
 
 namespace HepaticaAI.Core
 {
-    public class AILifecycleFacade(ILLMClient llmClient, IChatClient chatClient, IMovement movement, ISpeechRecognition speechRecognition, MessageProcessorSelector messageProcessorSelector)
+    public class AILifecycleFacade(ILLMClient llmClient, IChatClient chatClient, IMovement movement,
+        /*ISpeechRecognition speechRecognition,*/ /*VoiceMessageProcessorSelector voiceMessageProcessorSelector, */ChatMessageProcessorSelector chatChatMessageProcessorSelector)
     {
         public async Task StartLife()
         {
@@ -13,13 +14,15 @@ namespace HepaticaAI.Core
 
             //llmClient.Initialize();//TODO REWRITE TO ANOTHER LLM or use server api
 
-            messageProcessorSelector.Start();
+            //voiceMessageProcessorSelector.Start();//TODO REWRITE TO WORK WITH CHAT LISTENING 
+
+            chatChatMessageProcessorSelector.Start();//TODO REWRITE TO WORK WITH CHAT LISTENING 
 
             movement.Initialize();
 
-            //chatClient.Connect();//Todo add possibility to disable chat listening
+            chatClient.Connect();//Todo add possibility to disable chat listening
 
-            speechRecognition.Start();
+            //speechRecognition.Start();//TODO REWRITE TO WORK WITH CHAT LISTENING 
         }
 
         public void EndLife()
