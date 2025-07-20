@@ -3,7 +3,7 @@ import os
 
 import discord
 from discord.ext import commands
-from discord import FFmpegOpusAudio
+from discord import FFmpegOpusAudio, FFmpegPCMAudio
 
 #You should replace these with your llm and tts of choice
 #llm_dialo for fast but awful conversation
@@ -13,6 +13,8 @@ from modules import llm_guan_3b as llm, tts_windows as tts
 from os import environ
 from sys import exit
 TOKEN = os.getenv("DISCORD_TOKEN")
+import globals
+
 # TOKEN = esnviron.get("DISCORD_TOKEN", None) 
 if TOKEN is None:
     print("Need to set DISCORD_TOKEN in environmental variables. Exiting program.")
@@ -21,7 +23,7 @@ if TOKEN is None:
 DEEPGRAM_API_KEY = os.getenv("DEEPGRAM_API_KEY")
 # DEEPGRAM_API_KEY = environ.get("DEEPGRAM_API_KEY", None)
 from sinks.deepgram_sink import DeepgramSink as Sink #Connects to deepgram, requires API key
-sink_settings = Sink.SinkSettings(DEEPGRAM_API_KEY, 2000, 2000, 500000, 2)
+sink_settings = Sink.SinkSettings(DEEPGRAM_API_KEY, 500, 1000, 25000, -1)
 
 # from sinks.whisper_sink import WhisperSink as Sink #User whisper to transcribe audio and outputs to TTS
 # sink_settings = Sink.SinkSettings(50000, 1.2, 1.8, 0.75, 30, 3, -1)
@@ -45,6 +47,8 @@ ai = llm.LLM()
 speech = tts.TTS()
   
 voice_channel = None
+
+text_channel_global = None
 
 class DiscordUser:
     def __init__(self):
@@ -103,8 +107,16 @@ async def keep_voice_active(voice_client):
     while True:
         try:
             while voice_client.is_connected():
+                # audio_source = FFmpegPCMAudio(r"C:\Users\Danil\source\repos\HepaticaAI\src\HepaticaAI.WPFClient\bin\Debug\net8.0-windows\output20250221224951.mp3")
+                # voice_client.play(audio_source, after=lambda e: print(f"Ошибка при воспроизведении: {e}" if e else "Воспроизведение завершено"))
+                if voice_client.is_playing():
+                    await asyncio.sleep(15)
+                    continue  
+                
+                # source = FFmpegPCMAudio(rf"C:\Users\Danil\source\repos\HepaticaAI\src\HepaticaAI.WPFClient\bin\Debug\net8.0-windows\output20250222001221.mp3")  # Файл с тишиной или белым шумом
                 source = FFmpegOpusAudio("silence.ogg")  # Файл с тишиной или белым шумом
                 voice_client.play(source)
+                
                 await asyncio.sleep(15)
             # Если голосовой клиент отключился, выходим из функции.
             break
@@ -112,11 +124,58 @@ async def keep_voice_active(voice_client):
             print(f"Произошла ошибка: {e}. Перезапуск функции...")
             await asyncio.sleep(1)  # Небольшая задержка перед перезапуском
 
+async def play_voice_if_exist(voice_client):
+    """
+    Проигрывает тишину или белый шум, чтобы Discord не отключал голосовую передачу.
+    В случае возникновения ошибки перезапускается.
+    """
+    while True:
+        try:
+            while voice_client.is_connected():
+                if globals.messagePathToSpeakGlobal!="":
+                    if voice_client.is_playing():  
+                        voice_client.stop()
+                    filename = globals.messagePathToSpeakGlobal
+                    file_path = rf"C:\Users\Danil\source\repos\HepaticaAI\src\HepaticaAI.WPFClient\bin\Debug\net8.0-windows\{filename}"
+                    audio_source = FFmpegPCMAudio(file_path)
+                    voice_client.play(audio_source, after=lambda e: print(f"Ошибка при воспроизведении: {e}" if e else "Воспроизведение завершено"))
+                    await text_channel_global.send(globals.userMessages)
+                    await text_channel_global.send(globals.aiAnswer)
+                    globals.messagePathToSpeakGlobal = ""
+                
+                await asyncio.sleep(1)
+            # Если голосовой клиент отключился, выходим из функции.
+            break
+        except Exception as e:
+            print(f"Произошла ошибка: {e}. Перезапуск функции...")
+            await asyncio.sleep(1)  # Небольшая задержка перед перезапуском
+
+# async def stop_speech_if_user_interrupt(voice_client):
+#     """
+#     Проигрывает тишину или белый шум, чтобы Discord не отключал голосовую передачу.
+#     В случае возникновения ошибки перезапускается.
+#     """
+#     while True:
+#         try:
+#             while voice_client.is_connected():
+#                 if globals.messagePathToSpeakGlobal == "" and globals.isUserInterrupting:
+#                     if voice_client.is_playing():  
+#                         voice_client.stop()
+#                     globals.isUserInterrupting = False
+                
+#                 await asyncio.sleep(5)
+#             # Если голосовой клиент отключился, выходим из функции.
+#             break
+#         except Exception as e:
+#             print(f"Произошла ошибка: {e}. Перезапуск функции...")
+#             await asyncio.sleep(1)  # Небольшая задержка перед перезапуском
 
 # join vc
 @client.command()
 async def join(ctx):
     global voice_channel
+    global text_channel_global
+    text_channel_global = ctx.channel
     if ctx.author.voice:
         channel = ctx.message.author.voice.channel
         try:
@@ -133,7 +192,8 @@ async def join(ctx):
         deepgram_sink = Sink(
             sink_settings=sink_settings,
             queue=asyncio.Queue(),
-            loop=loop
+            loop=loop,
+            voice = voice_channel
         )
         
 
@@ -141,6 +201,8 @@ async def join(ctx):
         voice_channel.start_recording(deepgram_sink, callback, ctx)
         
         loop.create_task(keep_voice_active(voice_channel))
+        loop.create_task(play_voice_if_exist(voice_channel))
+        # loop.create_task(stop_speech_if_user_interrupt(voice_channel))
         
         await ctx.send("Joining.")
     else:

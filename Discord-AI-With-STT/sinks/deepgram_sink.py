@@ -3,8 +3,9 @@ from asyncio import Queue
 from enum import Enum
 import json
 import time
-
+import functools
 # 3rd party
+from discord import VoiceClient
 from discord.sinks.core import Filters, Sink, default_filters
 from deepgram import (
     DeepgramClient,
@@ -13,8 +14,10 @@ from deepgram import (
     LiveOptions,
 )
 import websockets
+import globals
 
 messages_queue_global = asyncio.Queue() 
+# globals.messagePathToSpeakGlobal = "" 
 
 class Speaker():
     class SpeakerState(Enum):
@@ -24,8 +27,8 @@ class Speaker():
         STOP = 4
 
     def __init__(self, loop: asyncio.BaseEventLoop, out_queue: Queue, deepgram_API_key: str,
-                 sentence_end=300_000,  # 5 минут (примерно)
-                 utterance_end=600_000  # 10 минут (примерно)
+                 sentence_end=300,  # 5 минут (примерно)
+                 utterance_end=1000  # 10 минут (примерно)
                  ):
         """
         Инициализация спикера.
@@ -117,6 +120,7 @@ class Speaker():
                     else:
                         print(f"Финальный фрагмент: {sentence}")
                 else:
+                    globals.isUserInterrupting = True
                     await messages_queue_global.put({"user": 0, "result": sentence, "type": "Intermediate speech"})
                     print(f"Промежуточный результат: {sentence}")
 
@@ -173,8 +177,8 @@ class Speaker():
             # Для русского языка: language="ru"
             # Увеличиваем utterance_end_ms и endpointing, чтобы редко завершать речь
             options: LiveOptions = LiveOptions(
-                model="nova-2-general",         # проверьте, что модель поддерживает русский
-                language="ru",          # RU
+                model="nova-3",         # проверьте, что модель поддерживает русский
+                language="multi",          # RU
                 smart_format=True,
                 encoding="linear16",
                 channels=2,
@@ -239,9 +243,9 @@ class DeepgramSink(Sink):
     class SinkSettings:
         def __init__(self,
                      deepgram_API_key: str,
-                     sentence_end=300_000,
-                     utterence_end=600_000,
-                     data_length=25000,
+                    sentence_end=500,
+                    utterence_end= 1000,
+                    data_length=25000,
                      max_speakers=-1):
             """
             :param deepgram_API_key: Deepgram API ключ
@@ -260,7 +264,7 @@ class DeepgramSink(Sink):
                  filters=None,
                  sink_settings: SinkSettings,
                  queue: asyncio.Queue,
-                 loop: asyncio.AbstractEventLoop):
+                 loop: asyncio.AbstractEventLoop, voice: VoiceClient):
         if filters is None:
             filters = default_filters
         self.filters = filters
@@ -277,21 +281,36 @@ class DeepgramSink(Sink):
         
         self.speakers = []
 
-        self.loop.create_task(self.start_local_server())
+        self.loop.create_task(self.start_local_server(voice))
 
         self.loop.create_task(self.insert_voice())
 
         self.loop.create_task(self.start_processing())
 
-    async def local_server(self, websocket):
+    async def local_server(self, websocket, voice ):
         """Обработчик входящих WebSocket-соединений."""
         self.connected_clients.add(websocket)  
         try:
             async for message in websocket:
+                if message == "STOP":
+                    # if voice.is_playing():  
+                    voice.stop()
+                # data = json.loads(message)
+                # print(f"📥 Получено от {data['user']}: {data['result']}")
+                print(f"📥 Получено {message}")
                 data = json.loads(message)
-                print(f"📥 Получено от {data['user']}: {data['result']}")
+                globals.userMessages = data.get("UserMessages")
+                globals.aiAnswer = data.get("AiAnswer")
+                globals.messagePathToSpeakGlobal = data.get("CurrentSpeakAudioPath")
+
+        except websockets.exceptions.ConnectionClosedError:
+            print("🚫 Клиент неожиданно закрыл соединение")
+        except Exception as e:
+            print(f"❌ Ошибка: {e}")
         finally:
-            self.connected_clients.remove(websocket)
+            self.connected_clients.discard(websocket)
+            print("📥 Соединение закрыто")
+    
     async def process_queue(self):
         """
         Обрабатывает сообщения из messages_queue_global в фоновом режиме
@@ -302,7 +321,7 @@ class DeepgramSink(Sink):
                 message = await messages_queue_global.get()  # Получаем сообщение
                 
                 if message is not None:
-                    message_json = json.dumps(message)
+                    message_json = json.dumps(message, ensure_ascii=False)
                     
                     for ws in self.connected_clients:
                         try:
@@ -320,9 +339,13 @@ class DeepgramSink(Sink):
         """Запускает обработку очереди в фоновом режиме"""
         asyncio.create_task(self.process_queue())  # Запуск без блокировки основного потока
 
-    async def start_local_server(self):
+    async def start_local_server(self, voice):
         """Запуск локального WebSocket-сервера в фоновом режиме"""
-        server = await websockets.serve(self.local_server, "localhost", 8765)
+        server = await websockets.serve(
+        functools.partial(self.local_server, voice=voice),  # Correct way to pass 'voice'
+        "localhost",
+        8765
+    )
         print("✅ Локальный WebSocket-сервер запущен на ws://localhost:8765")
         await server.wait_closed()
 

@@ -13,187 +13,26 @@ namespace HepaticaAI.Brain.Services;
 public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
 {
     private ClientWebSocket _ws;
-    private readonly Uri _serverUri = new Uri("ws://localhost:8765");
+    private readonly Uri _serverUri = new("ws://localhost:8765");
     private readonly IMemory _memory;
-
     private readonly DiscordService _discordService;
 
-    //private readonly ChatMessageProcessorSelector _chatMessageProcessorSelector;
     private readonly CancellationTokenSource _cts = new();
-    private readonly TimeSpan _interval = TimeSpan.FromMilliseconds(200);
-    private Timer _timer;
+    private readonly List<MessageEntry> _voiceChatMessageQueue = new();
 
-    //public PythonWebSocketDiscordSpeechRecognition(IMemory memory, VoiceMessageProcessorSelector voiceMessageProcessorSelector)
-    //{
-    //    _memory = memory;
-    //    _voiceMessageProcessorSelector = voiceMessageProcessorSelector;
-    //    _ws = new ClientWebSocket();
-    //}
+    private DateTime _flagLastActivated = DateTime.MinValue;
+    private bool _flagIsActive;
+
     public PythonWebSocketDiscordSpeechRecognition(IMemory memory, DiscordService discordService)
     {
         _memory = memory;
         _discordService = discordService;
-        //chatMessageProcessorSelector = chatMessageProcessorSelector;
         _ws = new ClientWebSocket();
     }
 
-    //private async void TimerCallback(object? state)
-    //{
-    //    await SpeakMessageIfFilePathExist(state);
-    //}
-
-    //private async Task SpeakMessageIfFilePathExist(object? state)
-    //{
-    //    if (!string.IsNullOrEmpty(_voiceMessageProcessorSelector.CurrentSpeakAudioPath))
-    //    {
-    //        await SendMessageAsync(_voiceMessageProcessorSelector.CurrentSpeakAudioPath);
-
-    //        _voiceMessageProcessorSelector.CurrentSpeakAudioPath = string.Empty;
-    //    }
-    //}
-
-    //public void Start()
-    //{
-    //    Debug.WriteLine("🚀 Starting WebSocket in background...");
-    //    _timer = new Timer(TimerCallback, null, TimeSpan.Zero, _interval);
-    //    Task.Run(() => RunWebSocket(_cts.Token));
-    //}
-
-    //private async Task RunWebSocket(CancellationToken token)
-    //{
-    //    while (!token.IsCancellationRequested)
-    //    {
-    //        try
-    //        {
-    //            await ConnectWebSocket();
-
-    //            await ReceiveMessages(token);
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            Debug.WriteLine($"❌ WebSocket error: {ex.Message}");
-    //            await Task.Delay(2000, token);
-    //        }
-    //    }
-    //}
-
-    //private async Task ConnectWebSocket()
-    //{
-    //    if (_ws.State == WebSocketState.Open)
-    //        return;
-
-    //    _ws.Dispose();
-    //    _ws = new ClientWebSocket();
-
-    //    Debug.WriteLine("🔄 Connecting to WebSocket...");
-    //    await _ws.ConnectAsync(_serverUri, CancellationToken.None);
-    //    Debug.WriteLine("✅ WebSocket connected");
-    //}
-
-    //private readonly Dictionary<long, (string Message, DateTime Timestamp)> _recentMessages = new();
-
-    //private async Task ReceiveMessages(CancellationToken token)
-    //{
-    //    byte[] receiveBuffer = new byte[1024];
-
-    //    while (_ws.State == WebSocketState.Open && !token.IsCancellationRequested)
-    //    {
-    //        try
-    //        {
-    //            var result = await _ws.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), token);
-
-    //            if (result.MessageType == WebSocketMessageType.Close)
-    //            {
-    //                Debug.WriteLine("🔴 Server closed connection");
-    //                await _ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing", CancellationToken.None);
-    //                break;
-    //            }
-
-    //            string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
-    //            Debug.WriteLine($"📥 Received: {receivedMessage}");
-
-    //            var data = JsonSerializer.Deserialize<SpeechResultDiscordWebSocket>(receivedMessage);
-
-    //            if (data?.type == "Intermediate speech")
-    //            {
-    //                Debug.WriteLine($"📥 Received: {data.user}, {data.result}");
-
-    //                if (IsDuplicateMessage(data.user, data.result!))
-    //                {
-    //                    Debug.WriteLine($"⚠️ Duplicate message detected from {data.user}. Sending stop signal.");
-    //                    await SendStopSignal();
-    //                }
-
-    //                _voiceMessageProcessorSelector.SetFalseIsNotPlayingIntermediateSpeech();
-    //            }
-    //            else if (!string.IsNullOrEmpty(data?.result))
-    //            {
-    //                Debug.WriteLine($"📥 Received: {data.user}, {data.result}");
-
-    //                //Todo apply there function GetUsernameByIdAsync for discord username 
-
-    //                _memory.AddVoiceEntryToProcessInQueue(data.user.ToString(), data.result);
-    //            }
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            Debug.WriteLine($"⚠️ Receive error: {ex.Message}");
-    //            break;
-    //        }
-    //    }
-    //}
-
-    //public async Task SendMessageAsync(string message)
-    //{
-    //    if (_ws.State != WebSocketState.Open)
-    //    {
-    //        Debug.WriteLine("⚠️ WebSocket is not connected. Unable to send message.");
-    //        return;
-    //    }
-
-    //    try
-    //    {
-    //        byte[] encodedMessage = Encoding.UTF8.GetBytes(message);
-    //        await _ws.SendAsync(new ArraySegment<byte>(encodedMessage), WebSocketMessageType.Text, true, CancellationToken.None);
-    //        Debug.WriteLine($"📤 Sent: {message}");
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Debug.WriteLine($"❌ Send error: {ex.Message}");
-    //    }
-    //}
-
-    //private bool IsDuplicateMessage(long user, string message)
-    //{
-    //    if (_recentMessages.TryGetValue(user, out var entry) && entry.Message == message)
-    //    {
-    //        if ((DateTime.UtcNow - entry.Timestamp).TotalSeconds <= InteruptinIntervalInSeconds)
-    //        {
-    //            return true;
-    //        }
-    //    }
-    //    _recentMessages[user] = (message, DateTime.UtcNow);
-    //    return false;
-    //}
-
-    //private static int InteruptinIntervalInSeconds => 1;
-
-    //private async Task SendStopSignal()
-    //{
-    //    var stopMessage = "STOP";
-
-    //    await SendMessageAsync(stopMessage);
-    //}
-
-    //public void Stop()
-    //{
-    //    _cts.Cancel();
-    //    Debug.WriteLine("🛑 WebSocket stopped.");
-    //}
     public void Start()
     {
         Debug.WriteLine("🚀 Starting WebSocket in background...");
-        //_timer = new Timer(TimerCallback, null, TimeSpan.Zero, _interval);
         Task.Run(() => RunWebSocket(_cts.Token));
     }
 
@@ -204,7 +43,6 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
             try
             {
                 await ConnectWebSocket();
-
                 await ReceiveMessages(token);
             }
             catch (Exception ex)
@@ -252,37 +90,22 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
 
                 if (data?.type == "Intermediate speech")
                 {
-                    Debug.WriteLine($"📥 Received: {data.user}, {data.result}");
-
-                    //if (IsDuplicateMessage(data.user, data.result!))
-                    //{
-                    //    Debug.WriteLine($"⚠️ Duplicate message detected from {data.user}. Sending stop signal.");
-                    //    await SendStopSignal();
-                    //}
-                    ActivateFlag();
+                    Debug.WriteLine($"📥 Intermediate: {data.user}, {data.result}");
+                    TouchFlag();
                 }
                 else if (!string.IsNullOrEmpty(data?.result))
                 {
-                    Debug.WriteLine($"📥 Received: {data.user}, {data.result}");
+                    Debug.WriteLine($"📥 Final: {data.user}, {data.result}");
 
                     var username = await _discordService.GetUsernameByIdAsync((ulong)data.user);
 
-                    //Todo apply there function GetUsernameByIdAsync for discord username 
+                    _voiceChatMessageQueue.Add(new MessageEntry(username!, data.result));
 
-                    if (IsFlagRecentlyActivated())
+                    if (!IsFlagRecentlyActivated())
                     {
-                        _voiceChatMessageQueue.Add(new MessageEntry(username!, data.result));
-                    }
-                    else
-                    {
-                        _voiceChatMessageQueue.Add(new MessageEntry(username!, data.result));
                         _memory.AddEntitiesToProcessInQueue(_voiceChatMessageQueue);
                         _voiceChatMessageQueue.Clear();
                     }
-
-                    //_memory.AddEntryToProcessInQueue(username!, data.result);
-                    //_memory.фвв(username!, data.result);
-                    //_memory.AddVoiceEntryToProcessInQueue(data.user.ToString(), data.result);
                 }
             }
             catch (Exception ex)
@@ -291,52 +114,6 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
                 break;
             }
         }
-    }
-
-    private readonly List<MessageEntry> _voiceChatMessageQueue = new();
-
-    private bool _flagIsActive;
-    private DateTime _flagLastActivated = DateTime.MinValue;
-
-    private CancellationTokenSource? _flushCts;
-
-    public void ActivateFlag()
-    {
-        _flagIsActive = true;
-        _flagLastActivated = DateTime.UtcNow;
-
-        // отменяем предыдущую задачу ожидания, если она есть
-        _flushCts?.Cancel();
-        _flushCts = new CancellationTokenSource();
-        var localCts = _flushCts;
-
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(TimeSpan.FromSeconds(2), localCts.Token);
-
-                // Если не отменено и очередь не пуста — обрабатываем
-                if (_voiceChatMessageQueue.Count > 0)
-                {
-                    Debug.WriteLine("🟢 No new speech in 5s, processing queued messages.");
-                    _memory.AddEntitiesToProcessInQueue(_voiceChatMessageQueue);
-                    _voiceChatMessageQueue.Clear();
-                }
-
-                _flagIsActive = false;
-            }
-            catch (TaskCanceledException)
-            {
-                Debug.WriteLine("⏹️ Timer reset due to new input.");
-            }
-        });
-    }
-
-
-    public bool IsFlagRecentlyActivated()
-    {
-        return (DateTime.UtcNow - _flagLastActivated) <= TimeSpan.FromSeconds(5);
     }
 
     public async Task SendMessageAsync(string message)
