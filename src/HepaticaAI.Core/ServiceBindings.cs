@@ -14,6 +14,7 @@ namespace HepaticaAI.Core
 
             //serviceCollection.AddSingleton<VoiceMessageProcessorSelector>();//TODO UNCOMMIT AFTER STARTING TO WORK WITH DISCORD TTS 
             serviceCollection.AddSingleton<ChatMessageProcessorSelector>();
+            serviceCollection.AddSingleton<DiscordService>();//TODO UNCOMMIT AFTER STARTING TO WORK WITH DISCORD 
 
             return serviceCollection;
         }

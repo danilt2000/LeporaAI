@@ -1,4 +1,5 @@
-﻿using HepaticaAI.Core.Interfaces.AI;
+﻿using Discord;
+using HepaticaAI.Core.Interfaces.AI;
 using HepaticaAI.Core.Interfaces.Memory;
 using HepaticaAI.Core.Interfaces.Movement;
 using HepaticaAI.Core.Interfaces.SpeechRecognition;
@@ -6,15 +7,19 @@ using HepaticaAI.Core.Interfaces.Translations;
 using HepaticaAI.Core.Interfaces.Voice;
 using HepaticaAI.Core.Models;
 using HepaticaAI.Core.Models.Messages;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Speech.Synthesis;
+using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace HepaticaAI.Core
 {
     public class ChatMessageProcessorSelector
     {
+        private readonly DiscordService _discordService;
         private readonly IMemory _memory;
         private readonly ILLMClient _llmClient;
         private readonly ITranslation _translation;
@@ -39,15 +44,18 @@ namespace HepaticaAI.Core
             LastIsNotPlayingIntermediateOrFinalSpeechChange = DateTime.UtcNow;
         }
 
-        public ChatMessageProcessorSelector(IMemory memory, ILLMClient llmClient, ITranslation translation, IMovement movement, IVoiceSynthesis voice/*, ISpeechRecognition speechRecognition*/)
+        public ChatMessageProcessorSelector(DiscordService discordService,
+            IMemory memory, ILLMClient llmClient, ITranslation translation, IMovement movement, IVoiceSynthesis voice, ISpeechRecognition speechRecognition)
         {
+            _discordService = discordService;
             _memory = memory;
             _llmClient = llmClient;
             _translation = translation;
             _movement = movement;
             _voice = voice;
             _timer = new Timer(Execute, null, TimeSpan.Zero, _interval);
-            //_speechRecognition = speechRecognition;
+            _speechRecognition = speechRecognition;
+            _speechRecognition.Start();
             //_timer = new Timer(EnqueueMessages, null, TimeSpan.Zero, _interval);
             //_timer = new Timer(EnqueueVoiceMessages, null, TimeSpan.Zero, _interval);
             //_timer = new Timer(UpdateIsNotPlayingIntermediateOrFinalSpeechState, null, TimeSpan.Zero, _interval);
@@ -66,6 +74,9 @@ namespace HepaticaAI.Core
         {
             if (_memory.HasMessagesToProcess() && _memory.IsNotCurrentlyProcessingMessage())
             {
+                var cts = new CancellationTokenSource();
+                CancellationToken cancellationToken = cts.Token;
+
                 _memory.StartProcessing();
 
                 var chatMessagesToProcess = _memory.GetChatMessagesToProcess();
@@ -77,15 +88,33 @@ namespace HepaticaAI.Core
 
                 _memory.AddEntities(chatMessagesToProcess);
 
-                Debug.WriteLine($"Ai answer:{aiAnswer}");
+                _memory.AddEntity("LeporaAI", aiAnswer);
 
+                var userMessages = string.Join(" :", chatMessagesToProcess.Select(m => $"{m.Role}:{m.Message}"));
+
+                Debug.WriteLine($"Users messages :{userMessages}");
+                Debug.WriteLine($"Ai answer:{aiAnswer}");
                 _movement.StartWinkAnimation();
                 _movement.OpenMouth();
-                var synthesizer = new SpeechSynthesizer();//TODO REWRITE IT TO ANOTHER TTS!!!!!!!!!!!!!
 
-                synthesizer.SelectVoice("Microsoft Irina Desktop");
+                var speakAudioPath = _voice.GenerateSpeakAudioAndGetFilePath(aiAnswer);
 
-                synthesizer.Speak($"{aiAnswer}");
+                CurrentSpeakAudioPath = speakAudioPath;
+
+                var audioDuration = _voice.GetAudioDuration(speakAudioPath);
+
+                var speeachMessage = new SpeeachMessage()
+                    { AiAnswer = aiAnswer, CurrentSpeakAudioPath = speakAudioPath, UserMessages = userMessages };
+
+                await _speechRecognition.SendMessageAsync(JsonSerializer.Serialize(speeachMessage));
+
+                await Task.Delay(TimeSpan.FromSeconds(audioDuration.Seconds), cancellationToken);
+
+                //var synthesizer = new SpeechSynthesizer();//TODO REWRITE IT TO ANOTHER TTS!!!!!!!!!!!!!
+
+                //synthesizer.SelectVoice("Microsoft Irina Desktop");
+
+                //synthesizer.Speak($"{aiAnswer}");
                 //synthesizer.Speak($"{messageToProcess.Role} {aiAnswer}");
 
                 //_idleTimer.Change(_idleInterval, Timeout.InfiniteTimeSpan);//Todo think about deleting idle timer 
@@ -100,6 +129,14 @@ namespace HepaticaAI.Core
         {
             _timer.Dispose();
         }
+    }
 
+    public class SpeeachMessage()//TODO MOVE TO FOLDER 
+    {
+        public string? CurrentSpeakAudioPath { get; set; }
+
+        public string? UserMessages { get; set; }
+
+        public string? AiAnswer { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using HepaticaAI.Brain.Models;
-using HepaticaAI.Core;
 using HepaticaAI.Core.Interfaces.Memory;
 using HepaticaAI.Core.Interfaces.SpeechRecognition;
 using HepaticaAI.Core.Models.Messages;
@@ -7,6 +6,7 @@ using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using HepaticaAI.Core;
 
 namespace HepaticaAI.Brain.Services;
 
@@ -20,14 +20,18 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
     private readonly CancellationTokenSource _cts = new();
     private readonly List<MessageEntry> _voiceChatMessageQueue = new();
 
-    private DateTime _flagLastActivated = DateTime.MinValue;
-    private bool _flagIsActive;
+    private readonly System.Timers.Timer _inactivityTimer;
+    private readonly TimeSpan _inactivityTimeout = TimeSpan.FromSeconds(1);
 
     public PythonWebSocketDiscordSpeechRecognition(IMemory memory, DiscordService discordService)
     {
         _memory = memory;
         _discordService = discordService;
         _ws = new ClientWebSocket();
+
+        _inactivityTimer = new(_inactivityTimeout.TotalMilliseconds);
+        _inactivityTimer.Elapsed += (_, _) => ProcessPendingMessages();
+        _inactivityTimer.AutoReset = false;
     }
 
     public void Start()
@@ -91,7 +95,7 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
                 if (data?.type == "Intermediate speech")
                 {
                     Debug.WriteLine($"📥 Intermediate: {data.user}, {data.result}");
-                    TouchFlag();
+                    ResetInactivityTimer();
                 }
                 else if (!string.IsNullOrEmpty(data?.result))
                 {
@@ -99,13 +103,9 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
 
                     var username = await _discordService.GetUsernameByIdAsync((ulong)data.user);
 
-                    _voiceChatMessageQueue.Add(new MessageEntry(username!, data.result));
+                    ResetInactivityTimer();
 
-                    if (!IsFlagRecentlyActivated())
-                    {
-                        _memory.AddEntitiesToProcessInQueue(_voiceChatMessageQueue);
-                        _voiceChatMessageQueue.Clear();
-                    }
+                    _voiceChatMessageQueue.Add(new MessageEntry(username!, data.result));
                 }
             }
             catch (Exception ex)
@@ -113,6 +113,22 @@ public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
                 Debug.WriteLine($"⚠️ Receive error: {ex.Message}");
                 break;
             }
+        }
+    }
+
+    private void ResetInactivityTimer()
+    {
+        _inactivityTimer.Stop();
+        _inactivityTimer.Start();
+    }
+
+    private void ProcessPendingMessages()
+    {
+        if (_voiceChatMessageQueue.Count > 0)
+        {
+            _memory.AddEntitiesToProcessInQueue(_voiceChatMessageQueue);
+            _voiceChatMessageQueue.Clear();
+            Debug.WriteLine("🧠 Memory updated after inactivity timeout");
         }
     }
 

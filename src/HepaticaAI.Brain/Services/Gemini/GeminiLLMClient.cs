@@ -30,9 +30,8 @@ namespace HepaticaAI.Brain.Services.Gemini
             var savedMessages = memory.GetFormattedPrompt();
 
             var combinedText = string.Join(" :", messages.Select(m => $"{m.Role}:{m.Message}"));
-            var result = await geminiApiService.SummarizeAsync(savedMessages + combinedText);
-
-            memory.AddEntity("LeporaAI", result);
+            var result = await geminiApiService.SummarizeAsync(savedMessages + "\n" + combinedText);
+            
             return result;
         }
     }

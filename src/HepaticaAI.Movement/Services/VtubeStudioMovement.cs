@@ -48,7 +48,17 @@ namespace HepaticaAI.Movement.Services
 
             ws.Connect();
 
-            RequestAuthenticationToken();
+            if (File.Exists("auth_token.txt"))
+            {
+                string savedToken = File.ReadAllText("auth_token.txt");
+                SendAuthenticationRequest(savedToken);
+                Console.WriteLine("🔑 Using saved authentication token.");
+            }
+            else
+            {
+                RequestAuthenticationToken();
+                Console.WriteLine("📩 Requesting new authentication token.");
+            }
         }
 
         private static void RequestAuthenticationToken()
@@ -58,6 +68,7 @@ namespace HepaticaAI.Movement.Services
                 apiName = "VTubeStudioPublicAPI",
                 apiVersion = "1.0",
                 messageType = "AuthenticationTokenRequest",
+                requestID = Guid.NewGuid().ToString(),
                 data = new
                 {
                     pluginName = PLUGIN_NAME,
@@ -66,7 +77,25 @@ namespace HepaticaAI.Movement.Services
             };
 
             ws.Send(JsonConvert.SerializeObject(tokenRequest));
-            Console.WriteLine("Sent authentication token request");
+        }
+
+        private static void SendAuthenticationRequest(string token)
+        {
+            var authRequest = new
+            {
+                apiName = "VTubeStudioPublicAPI",
+                apiVersion = "1.0",
+                messageType = "AuthenticationRequest",
+                requestID = Guid.NewGuid().ToString(),
+                data = new
+                {
+                    pluginName = PLUGIN_NAME,
+                    pluginDeveloper = PLUGIN_AUTHOR,
+                    authenticationToken = token
+                }
+            };
+
+            ws.Send(JsonConvert.SerializeObject(authRequest));
         }
 
         private void OnMessageReceived(object sender, MessageEventArgs e)
@@ -76,7 +105,9 @@ namespace HepaticaAI.Movement.Services
             switch (response.messageType.ToString())
             {
                 case "AuthenticationTokenResponse":
-                    HandleAuthTokenResponse(response);
+                    string token = response.data.authenticationToken.ToString();
+                    File.WriteAllText("auth_token.txt", token);
+                    SendAuthenticationRequest(token);
                     break;
 
                 case "AuthenticationResponse":
@@ -204,6 +235,7 @@ namespace HepaticaAI.Movement.Services
             var command = new
             {
                 apiName = "VTubeStudioPublicAPI",
+                requestID = Guid.NewGuid().ToString(),
                 apiVersion = "1.0",
                 messageType = "InjectParameterDataRequest",
                 data = new
@@ -233,6 +265,7 @@ namespace HepaticaAI.Movement.Services
             var command = new
             {
                 apiName = "VTubeStudioPublicAPI",
+                requestID = Guid.NewGuid().ToString(),
                 apiVersion = "1.0",
                 messageType = "CurrentModelRequest"
             };
@@ -245,6 +278,7 @@ namespace HepaticaAI.Movement.Services
             var command = new
             {
                 apiName = "VTubeStudioPublicAPI",
+                requestID = Guid.NewGuid().ToString(),
                 apiVersion = "1.0",
                 messageType = "HotkeysInCurrentModelRequest"
             };
@@ -258,6 +292,7 @@ namespace HepaticaAI.Movement.Services
             {
                 apiName = "VTubeStudioPublicAPI",
                 apiVersion = "1.0",
+                requestID = Guid.NewGuid().ToString(),
                 messageType = "HotkeyTriggerRequest",
                 data = new
                 {
@@ -341,6 +376,7 @@ namespace HepaticaAI.Movement.Services
             {
                 apiName = "VTubeStudioPublicAPI",
                 apiVersion = "1.0",
+                requestID = Guid.NewGuid().ToString(),
                 messageType = "InjectParameterDataRequest",
                 data = new
                 {

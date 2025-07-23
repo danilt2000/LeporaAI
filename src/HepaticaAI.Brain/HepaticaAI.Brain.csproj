@@ -11,9 +11,6 @@
     <PackageReference Include="Concentus" Version="2.2.2" />
     <PackageReference Include="Deepgram" Version="5.0.0" />
     <PackageReference Include="DeepL.net" Version="1.10.0" />
-    <PackageReference Include="Discord.Net" Version="3.17.1" />
-    <PackageReference Include="Discord.Net.Core" Version="3.17.1" />
-    <PackageReference Include="Discord.Net.WebSocket" Version="3.17.1" />
     <PackageReference Include="DSharpPlus" Version="4.5.0" />
     <PackageReference Include="DSharpPlus.Natives.Opus" Version="1.5.2.18" />
     <PackageReference Include="DSharpPlus.VoiceNext" Version="4.5.0" />

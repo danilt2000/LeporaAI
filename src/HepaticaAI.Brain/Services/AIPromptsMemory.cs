@@ -6,13 +6,6 @@ namespace HepaticaAI.Brain.Services
 {
     internal class AIPromptsMemory : IMemory
     {
-        //private readonly List<(string Role, string Message)> _history =//Todo TEST THIS SET MESSAGES IN MEMORY 
-        //[
-        //    ("Hepatica", "Первое сообщение"),
-        //    ("\nLeporaAI", "Включаюсь"),
-        //    ("\nHepatica", "что делаешь?"),
-        //    ("\nLeporaAI", "")
-        //];
 
         private readonly List<MessageEntry> _history = new();
 
@@ -61,6 +54,11 @@ namespace HepaticaAI.Brain.Services
         public void AddEntryToProcessInQueue(string role, string message)
         {
             _unprocessedChatMessagesQueue.Add(new MessageEntry(role, message));
+        }
+
+        public void AddEntitiesToProcessInQueue(List<MessageEntry> messages)
+        {
+            _unprocessedChatMessagesQueue.AddRange(messages);
         }
 
         public void AddVoiceEntryToProcessInQueue(string role, string message)

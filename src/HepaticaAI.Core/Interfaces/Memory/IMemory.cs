@@ -14,6 +14,8 @@ namespace HepaticaAI.Core.Interfaces.Memory
 
         void AddEntryToProcessInQueue(string role, string message);
 
+        void AddEntitiesToProcessInQueue(List<MessageEntry> messages);
+
         void AddVoiceEntryToProcessInQueue(string role, string message);
 
         string GetFormattedPrompt();
@@ -33,7 +35,7 @@ namespace HepaticaAI.Core.Interfaces.Memory
         void StopProcessing();
 
         MessageEntry GetMessageToProcess();
-        
+
         List<MessageEntry> GetChatMessagesToProcess();
 
         List<MessageEntry> GetVoiceMessagesToProcess();

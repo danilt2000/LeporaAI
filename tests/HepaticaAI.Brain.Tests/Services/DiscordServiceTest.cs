@@ -1,4 +1,5 @@
 ﻿using HepaticaAI.Brain.Services;
+using HepaticaAI.Core;
 using HepaticaAI.Core.Interfaces.Memory;
 using Microsoft.Extensions.Configuration;
 using Moq.AutoMock;
@@ -30,10 +31,10 @@ namespace HepaticaAI.Brain.Tests.Services
         public async Task GetUsernameByIdAsyncTest()
         {
             await Task.Delay(TimeSpan.FromSeconds(10));
-            
-            var userName  = await _sut.GetUsernameByIdAsync(293977705815343105);
 
-            Assert.True(userName=="Hepatica");
+            var userName = await _sut.GetUsernameByIdAsync(293977705815343105);
+
+            Assert.True(userName == "Hepatir");
         }
     }
 }

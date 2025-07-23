@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HepaticaAI.Core.Interfaces.Voice;
+﻿using HepaticaAI.Core.Interfaces.Voice;
 using HepaticaAI.Voice.Services;
-using Microsoft.Extensions.Configuration;
 using Moq.AutoMock;
 using Xunit;
 
@@ -30,6 +24,14 @@ namespace HepaticaAI.Voice.Tests.Services
         public void SpeakTest()
         {
             _sut.Speak("\"Hepatir  Ахахахахаха, ты считаешь себя философом? Цитаты Ницше такие клишированные. Но ладно, вот одна: \\\"Чтобы родить танцующую звезду, в тебе должен быть хаос\\\". А теперь перестань притворяться, будто знаешь, что это значит.\\n\"");
+        }
+
+        [Fact]
+        public void GenerateSpeakAudioAndGetFilePathTest()
+        {
+            var filePath = _sut.GenerateSpeakAudioAndGetFilePath("\"Hepatir  Ахахахахаха, ты считаешь себя философом? Цитаты Ницше такие клишированные. Но ладно, вот одна: \\\"Чтобы родить танцующую звезду, в тебе должен быть хаос\\\". А теперь перестань притворяться, будто знаешь, что это значит.\\n\"");
+
+            var timeSpan = _sut.GetAudioDuration(filePath);
         }
     }
 }

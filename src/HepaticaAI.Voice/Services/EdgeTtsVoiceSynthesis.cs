@@ -1,4 +1,5 @@
 ﻿using HepaticaAI.Core.Interfaces.Voice;
+using NAudio.Wave;
 using System.Diagnostics;
 
 namespace HepaticaAI.Voice.Services
@@ -57,7 +58,13 @@ namespace HepaticaAI.Voice.Services
                 Debug.WriteLine("Error in process: " + ex.Message);
             }
         }
-
+        
+        public TimeSpan GetAudioDuration(string filePath)
+        {
+            using var reader = new Mp3FileReader(filePath);
+            return reader.TotalTime;
+        }
+        
         public string GenerateSpeakAudioAndGetFilePath(string text)
         {
             string outputFile = $"output{DateTime.Now:yyyyMMddHHmmss}.mp3";

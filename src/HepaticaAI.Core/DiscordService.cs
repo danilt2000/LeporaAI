@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using IAudioClient = Discord.Audio.IAudioClient;
 using TokenType = Discord.TokenType;
 
+namespace HepaticaAI.Core;
+
 public class DiscordService
 {
     private readonly IConfiguration _configuration;
@@ -27,6 +29,11 @@ public class DiscordService
         _discord.StartAsync().GetAwaiter().GetResult();
     }
 
+    public void Initialization()
+    {
+
+    }
+
     private Task LogAsync(LogMessage log)
     {
         Console.WriteLine(log.ToString());
@@ -44,13 +51,12 @@ public class DiscordService
         var user = _discord.GetUser(userId);
         if (user != null)
         {
-            return user.Username;
+            return user.GlobalName;
         }
-
         try
         {
             var fetchedUser = await _discord.Rest.GetUserAsync(userId);
-            
+
             return fetchedUser?.GlobalName;
         }
         catch (Exception ex)
@@ -60,5 +66,26 @@ public class DiscordService
         }
     }
 
-   
+    public async Task SendMessageToGuildTextChannelAsync(string message)
+    {
+        foreach (var guild in _discord.Guilds)
+        {
+            var voiceChannel = guild.CurrentUser?.VoiceChannel;
+            if (voiceChannel == null)
+                continue;
+
+            foreach (var textChannel in guild.TextChannels.OrderBy(tc => tc.Position))
+            {
+                try
+                {
+                    await textChannel.SendMessageAsync($"🎙 {message}");
+                    break; 
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+        }
+    }
 }

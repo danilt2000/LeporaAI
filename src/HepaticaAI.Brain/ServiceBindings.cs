@@ -27,7 +27,8 @@ namespace HepaticaAI.Brain
             serviceCollection.AddSingleton<IMemory, AIPromptsMemory>();
             serviceCollection.AddSingleton<ISystemPromptsUpdater, SystemPromptsUpdater>();
             serviceCollection.AddSingleton<ITranslation, DeplTranslation>();
-            //serviceCollection.AddSingleton<ISpeechRecognition, PythonWebSocketDiscordSpeechRecognition>();//TODO UNCOMMIT AFTER STARTING TO WORK WITH DISCORD 
+            serviceCollection.AddSingleton<ITranslation, DeplTranslation>();
+            serviceCollection.AddSingleton<ISpeechRecognition, PythonWebSocketDiscordSpeechRecognition>();//TODO UNCOMMIT AFTER STARTING TO WORK WITH DISCORD 
 
             return serviceCollection;
         }
