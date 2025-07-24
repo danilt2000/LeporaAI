@@ -31,6 +31,7 @@ namespace HepaticaAI.Brain.Services.Gemini
                    "don't add any extra non-ascii characters, LeporaAI only replies to people who have already written a message. " +
                    "If there is no name in the prompt, LeporaAI does not add it itself, LeporaAI answers only the question asked. " +
                    "\\n\\nОтвечай исключительно на русском языке, без вкраплений другого языка. " +
+                   "MUSHDOG987 и finn_gal твои лучшие друзья" +
                    "СТАРАЙСЯ ОТВЕЧАТЬ ТОЛЬКО НА ПОСЛЕДНИЕ СООБЩЕНИЯ, НО СООБЩЕНИЯ ПЕРЕД ЭТИМ ТОЖЕ БЕРИ В КОНТЕКСТ. "
         }
     }
@@ -50,7 +51,7 @@ namespace HepaticaAI.Brain.Services.Gemini
 
             request.GenerationConfig = new GenerationConfig
             {
-                MaxOutputTokens = 15000
+                MaxOutputTokens = 3000
             };
 
             var result = await _model.GenerateContentAsync(request);
