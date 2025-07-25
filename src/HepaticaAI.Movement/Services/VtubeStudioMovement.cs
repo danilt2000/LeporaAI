@@ -41,7 +41,7 @@ namespace HepaticaAI.Movement.Services
 
         public void Initialize()
         {
-            ws = new WebSocket("ws://127.0.0.1:8001");
+            ws = new WebSocket("ws://127.0.0.1:8000");
             ws.OnMessage += OnMessageReceived!;
             ws.OnError += (sender, e) => Debug.WriteLine($"WebSocket Error: {e.Message}");
             ws.OnClose += (sender, e) => Debug.WriteLine("WebSocket Closed");

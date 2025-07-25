@@ -1,7 +1,6 @@
 ﻿using HepaticaAI.Core.Interfaces.Voice;
-using NAudio.Wave;
 using System.Diagnostics;
-
+using TagLib;
 namespace HepaticaAI.Voice.Services
 {
     internal class EdgeTtsVoiceSynthesis(IAudioPlayer audioPlayer) : IVoiceSynthesis
@@ -58,13 +57,13 @@ namespace HepaticaAI.Voice.Services
                 Debug.WriteLine("Error in process: " + ex.Message);
             }
         }
-        
+
         public TimeSpan GetAudioDuration(string filePath)
         {
-            using var reader = new Mp3FileReader(filePath);
-            return reader.TotalTime;
+            var file = TagLib.File.Create(filePath);
+            return file.Properties.Duration;
         }
-        
+
         public string GenerateSpeakAudioAndGetFilePath(string text)
         {
             string outputFile = $"output{DateTime.Now:yyyyMMddHHmmss}.mp3";
@@ -103,7 +102,7 @@ namespace HepaticaAI.Voice.Services
                 if (process.ExitCode != 0)
                 {
                     Debug.WriteLine($"Error: {error}");
-                    
+
                     throw new InvalidProgramException();
                 }
 
@@ -112,7 +111,63 @@ namespace HepaticaAI.Voice.Services
             catch (Exception ex)
             {
                 Debug.WriteLine("Error in process: " + ex.Message);
-                
+
+                throw;
+            }
+        }
+
+        public (string audioPath, string subtitlesPath) GenerateSpeakAudioAndGetFilePathWithSubtitles(string text)
+        {
+            string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string outputAudioFile = $"output{timestamp}.mp3";
+            string outputSubtitleFile = $"output{timestamp}.vtt";
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "edge-tts",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            startInfo.ArgumentList.Add("--text");
+            startInfo.ArgumentList.Add(text);
+            startInfo.ArgumentList.Add("--voice");
+            startInfo.ArgumentList.Add(Voice);
+            startInfo.ArgumentList.Add("--rate");
+            startInfo.ArgumentList.Add(Rate);
+            startInfo.ArgumentList.Add("--pitch");
+            startInfo.ArgumentList.Add(Pitch);
+
+            startInfo.ArgumentList.Add("--write-media");
+            startInfo.ArgumentList.Add(outputAudioFile);
+
+            startInfo.ArgumentList.Add("--write-subtitles");
+            startInfo.ArgumentList.Add(outputSubtitleFile);
+
+            try
+            {
+                using Process process = new Process { StartInfo = startInfo };
+
+                process.Start();
+
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+
+                process.WaitForExit();
+
+                if (process.ExitCode != 0)
+                {
+                    Debug.WriteLine($"Error: {error}");
+                    throw new InvalidProgramException();
+                }
+
+                return (outputAudioFile, outputSubtitleFile);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error in process: " + ex.Message);
                 throw;
             }
         }

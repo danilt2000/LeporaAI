@@ -7,18 +7,15 @@ using HepaticaAI.Core.Interfaces.Translations;
 using HepaticaAI.Core.Interfaces.Voice;
 using HepaticaAI.Core.Models;
 using HepaticaAI.Core.Models.Messages;
-using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Speech.Synthesis;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace HepaticaAI.Core
 {
     public class ChatMessageProcessorSelector
     {
+        private readonly SocketViewerWebSocketBridge _socketViewerWebSocketBridge;
         private readonly DiscordService _discordService;
         private readonly IMemory _memory;
         private readonly ILLMClient _llmClient;
@@ -44,9 +41,10 @@ namespace HepaticaAI.Core
             LastIsNotPlayingIntermediateOrFinalSpeechChange = DateTime.UtcNow;
         }
 
-        public ChatMessageProcessorSelector(DiscordService discordService,
+        public ChatMessageProcessorSelector(SocketViewerWebSocketBridge socketViewerWebSocketBridge, DiscordService discordService,
             IMemory memory, ILLMClient llmClient, ITranslation translation, IMovement movement, IVoiceSynthesis voice, ISpeechRecognition speechRecognition)
         {
+            _socketViewerWebSocketBridge = socketViewerWebSocketBridge;
             _discordService = discordService;
             _memory = memory;
             _llmClient = llmClient;
@@ -55,7 +53,7 @@ namespace HepaticaAI.Core
             _voice = voice;
             _timer = new Timer(Execute, null, TimeSpan.Zero, _interval);
             _speechRecognition = speechRecognition;
-            _speechRecognition.Start();
+            //_speechRecognition.Start();
             //_timer = new Timer(EnqueueMessages, null, TimeSpan.Zero, _interval);
             //_timer = new Timer(EnqueueVoiceMessages, null, TimeSpan.Zero, _interval);
             //_timer = new Timer(UpdateIsNotPlayingIntermediateOrFinalSpeechState, null, TimeSpan.Zero, _interval);
@@ -97,18 +95,21 @@ namespace HepaticaAI.Core
                 _movement.StartWinkAnimation();
                 _movement.OpenMouth();
 
-                var speakAudioPath = _voice.GenerateSpeakAudioAndGetFilePath(aiAnswer);
+                await _socketViewerWebSocketBridge.SendMessageAsync(aiAnswer);
+                _voice.Speak(aiAnswer);
+                //var speakAudioPath = _voice.GenerateSpeakAudioAndGetFilePath(aiAnswer);
 
-                CurrentSpeakAudioPath = speakAudioPath;
+                //CurrentSpeakAudioPath = speakAudioPath;
 
-                var audioDuration = _voice.GetAudioDuration(speakAudioPath);
+                //var audioDuration = _voice.GetAudioDuration(speakAudioPath);
 
-                var speeachMessage = new SpeeachMessage()
-                    { AiAnswer = aiAnswer, CurrentSpeakAudioPath = speakAudioPath, UserMessages = userMessages };
+                //var speeachMessage = new SpeeachMessage()
+                //{ AiAnswer = aiAnswer, CurrentSpeakAudioPath = speakAudioPath, UserMessages = userMessages };
 
-                await _speechRecognition.SendMessageAsync(JsonSerializer.Serialize(speeachMessage));
 
-                await Task.Delay(TimeSpan.FromSeconds(audioDuration.Seconds), cancellationToken);
+                //await _speechRecognition.SendMessageAsync(JsonSerializer.Serialize(speeachMessage));
+
+                //await Task.Delay(TimeSpan.FromSeconds(audioDuration.Seconds), cancellationToken);
 
                 //var synthesizer = new SpeechSynthesizer();//TODO REWRITE IT TO ANOTHER TTS!!!!!!!!!!!!!
 

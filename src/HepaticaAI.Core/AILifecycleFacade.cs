@@ -1,13 +1,12 @@
 ﻿using HepaticaAI.Core.Interfaces.AI;
 using HepaticaAI.Core.Interfaces.Movement;
-using HepaticaAI.Core.Interfaces.SpeechRecognition;
 using HepaticaAI.Core.Interfaces.Vision;
 
 namespace HepaticaAI.Core
 {
     public class AILifecycleFacade(ILLMClient llmClient, IChatClient chatClient, IMovement movement,
         /*ISpeechRecognition speechRecognition,*/ /*VoiceMessageProcessorSelector voiceMessageProcessorSelector, */ChatMessageProcessorSelector chatMessageProcessorSelector
-        , DiscordService discordService
+        , DiscordService discordService, SocketViewerWebSocketBridge socketViewerWebSocketBridge
         )
     {
         public async Task StartLife()
@@ -25,6 +24,7 @@ namespace HepaticaAI.Core
 
             chatClient.Connect();//Todo add possibility to disable chat listening
 
+            socketViewerWebSocketBridge.Start();
             //speechRecognition.Start();//TODO REWRITE TO WORK WITH CHAT LISTENING 
         }
 

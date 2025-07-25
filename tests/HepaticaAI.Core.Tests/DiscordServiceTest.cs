@@ -1,11 +1,8 @@
-﻿using HepaticaAI.Brain.Services;
-using HepaticaAI.Core;
-using HepaticaAI.Core.Interfaces.Memory;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Moq.AutoMock;
 using Xunit;
 
-namespace HepaticaAI.Brain.Tests.Services
+namespace HepaticaAI.Core.Tests
 {
     public class DiscordServiceTest
     {
@@ -22,7 +19,6 @@ namespace HepaticaAI.Brain.Tests.Services
             var automocker = new AutoMocker();
 
             automocker.Use<IConfiguration>(_config);
-            automocker.Use<IMemory>(automocker.CreateInstance<AIPromptsMemory>());
 
             _sut = automocker.CreateInstance<DiscordService>();
         }

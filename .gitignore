@@ -374,3 +374,5 @@ FodyWeavers.xsd
 /src/HepaticaAI.Brain/ffmpeg.exe
 /Discord-AI-With-STT/sinks/.env
 /discord-herota/discord-herota/.env
+/src/HepaticaAI.Web/appsettings.json
+/src/HepaticaAI.Web/auth_token.txt

@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Movement.Tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Voice.Tests", "tests\HepaticaAI.Voice.Tests\HepaticaAI.Voice.Tests.csproj", "{6D4C73D7-68FA-4AAF-89A6-BFF4EE8225E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Web", "src\HepaticaAI.Web\HepaticaAI.Web.csproj", "{69852D86-198B-4B58-828B-A6D43BF661E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HepaticaAI.Core.Tests", "tests\HepaticaAI.Core.Tests\HepaticaAI.Core.Tests.csproj", "{53D108D3-8A45-4EB2-B30E-D7DDB7DE04A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +77,14 @@ Global
 		{6D4C73D7-68FA-4AAF-89A6-BFF4EE8225E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D4C73D7-68FA-4AAF-89A6-BFF4EE8225E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D4C73D7-68FA-4AAF-89A6-BFF4EE8225E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69852D86-198B-4B58-828B-A6D43BF661E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69852D86-198B-4B58-828B-A6D43BF661E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69852D86-198B-4B58-828B-A6D43BF661E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69852D86-198B-4B58-828B-A6D43BF661E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53D108D3-8A45-4EB2-B30E-D7DDB7DE04A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D108D3-8A45-4EB2-B30E-D7DDB7DE04A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D108D3-8A45-4EB2-B30E-D7DDB7DE04A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D108D3-8A45-4EB2-B30E-D7DDB7DE04A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,5 +100,10 @@ Global
 		{69377A33-2C20-4A5C-A1B5-CB6E8C61A5A0} = {5D449D80-10E0-4E9D-B54F-C8D253E4611B}
 		{97CCB4F8-7CFA-4834-962B-3E3A4D783CE3} = {5D449D80-10E0-4E9D-B54F-C8D253E4611B}
 		{6D4C73D7-68FA-4AAF-89A6-BFF4EE8225E1} = {5D449D80-10E0-4E9D-B54F-C8D253E4611B}
+		{69852D86-198B-4B58-828B-A6D43BF661E2} = {DB08E5E4-ABC8-45C0-B2B3-AD506B9827CC}
+		{53D108D3-8A45-4EB2-B30E-D7DDB7DE04A1} = {5D449D80-10E0-4E9D-B54F-C8D253E4611B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8648423B-3C24-4621-BC09-236EB278C853}
 	EndGlobalSection
 EndGlobal
