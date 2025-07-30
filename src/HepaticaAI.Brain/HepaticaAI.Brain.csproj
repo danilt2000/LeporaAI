@@ -20,10 +20,6 @@
 		<PackageReference Include="NAudio.WaveFormRenderer" Version="2.0.0" />
 		<PackageReference Include="OoLunar.DSharpPlus.VoiceLink.Natives.Opus" Version="1.5.2" />
 		<PackageReference Include="Pinecone.Client" Version="4.0.2" />
-		<PackageReference Include="Whisper.net" Version="1.7.4" />
-		<PackageReference Include="Whisper.net.AllRuntimes" Version="1.7.4" />
-		<PackageReference Include="Whisper.net.Runtime" Version="1.7.4" />
-		<PackageReference Include="Whisper.net.Runtime.Cuda.Windows" Version="1.7.4" />
 		<PackageReference Include="Google_GenerativeAI" Version="2.7.0" />
 	</ItemGroup>
 
