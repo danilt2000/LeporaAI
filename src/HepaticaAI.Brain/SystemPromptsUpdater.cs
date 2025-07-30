@@ -17,8 +17,10 @@ namespace HepaticaAI.Brain
 
         public SystemPromptsUpdater()
         {
-            _projectRoot = Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.Parent!.FullName;
-            _binFolder = AppDomain.CurrentDomain.BaseDirectory; 
+            //TODO: FIX IT THROWS EXCEPTION Unhandled exception. System.NullReferenceException: Object reference not set to an instance of an object.
+            // at HepaticaAI.Brain.SystemPromptsUpdater..ctor() in /src/src/HepaticaAI.Brain/SystemPromptsUpdater.cs:line 20
+            //_projectRoot = Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.Parent!.FullName;
+            //_binFolder = AppDomain.CurrentDomain.BaseDirectory; 
         }
 
         public void UpdateSystemPrompt(string systemPromptsJsonName, string systemPrompts)
