@@ -1,6 +1,7 @@
 ﻿using HepaticaAI.Core.Interfaces.Memory;
 using System.Text;
 using HepaticaAI.Core.Models.Messages;
+using System.Collections.Generic;
 
 namespace HepaticaAI.Brain.Services
 {
@@ -88,6 +89,30 @@ namespace HepaticaAI.Brain.Services
             }
 
             return sb.ToString();
+        }
+
+        public List<MessageEntry> GetHistoryMessages()
+        {
+            List<MessageEntry> messages = new List<MessageEntry>();
+
+            int startIndex = Math.Max(0, _history.Count - 25);
+            //int startIndex = Math.Max(0, _history.Count - 14);
+
+            for (int i = startIndex; i < _history.Count; i++)
+            {
+                string cleanMessage = _history[i].Message.Replace("\r", "").Trim();
+
+                if (i == startIndex)
+                {
+                    messages.Add(new MessageEntry(_history[i].Role, cleanMessage));
+                }
+                else
+                {
+                    messages.Add(new MessageEntry(_history[i].Role, cleanMessage));
+                }
+            }
+
+            return messages;
         }
 
         public string GetFormattedPromptWithoutMemoryForgeting()

@@ -1,6 +1,7 @@
 ﻿using GenerativeAI;
 using HepaticaAI.Brain.Services;
 using HepaticaAI.Brain.Services.Gemini;
+using HepaticaAI.Brain.Services.Gpt4free;
 using HepaticaAI.Core.Interfaces.AI;
 using HepaticaAI.Core.Interfaces.Memory;
 using HepaticaAI.Core.Interfaces.SpeechRecognition;
@@ -20,8 +21,9 @@ namespace HepaticaAI.Brain
                 return new GenerativeModel(apiKey!, "gemini-2.0-flash");
             });
 
-            serviceCollection.AddSingleton<GeminiApiService>();
-            serviceCollection.AddSingleton<ILLMClient, GeminiLLMClient>();
+            //serviceCollection.AddSingleton<GeminiApiService>();
+            serviceCollection.AddSingleton<ILLMClient, Gpt4freeLLMClient>();
+            //serviceCollection.AddSingleton<ILLMClient, GeminiLLMClient>();
             //serviceCollection.AddSingleton<ILLMClient, KoboldCppLLMClient>();
             //serviceCollection.AddScoped<KoboldCppRunner>();
             serviceCollection.AddSingleton<IMemory, AIPromptsMemory>();
@@ -29,8 +31,10 @@ namespace HepaticaAI.Brain
             serviceCollection.AddSingleton<ITranslation, DeplTranslation>();
             serviceCollection.AddSingleton<ITranslation, DeplTranslation>();
             serviceCollection.AddSingleton<ISpeechRecognition, PythonWebSocketDiscordSpeechRecognition>();//TODO UNCOMMIT AFTER STARTING TO WORK WITH DISCORD 
+            serviceCollection.AddSingleton<LlmToolCalling>();
 
             return serviceCollection;
         }
     }
+
 }

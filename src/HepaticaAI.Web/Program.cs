@@ -22,7 +22,7 @@ namespace HepaticaAI.Web
             Configuration = configurationBuilder.Build();
 
             ConfigureServices(builder.Services);
-
+            builder.Services.AddControllers();
             builder.Services.AddRazorPages();
 
             builder.Services.AddSingleton<WebSocketConnectionManager>();
@@ -47,6 +47,7 @@ namespace HepaticaAI.Web
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthorization();
+            app.MapControllers();
             app.MapRazorPages();
 
             app.Run();

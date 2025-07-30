@@ -31,7 +31,6 @@ namespace HepaticaAI.Brain.Tests.Services
             automocker.Use<IMemory>(automocker.CreateInstance<AIPromptsMemory>());
 
             var apiKey = _config["Gemini:ApiKey"];
-            ApiKey = _config["Gemini:ApiKey"];
 
             if (string.IsNullOrWhiteSpace(apiKey))
                 throw new InvalidOperationException("Gemini:ApiKey not configured. Set env GEMINI_API_KEY or appsettings.integration.json");

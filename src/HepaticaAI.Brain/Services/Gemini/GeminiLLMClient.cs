@@ -7,7 +7,7 @@ using System.Speech.Synthesis;
 
 namespace HepaticaAI.Brain.Services.Gemini
 {
-    internal class GeminiLLMClient(GeminiApiService geminiApiService, IConfiguration configuration, IMemory memory, ISystemPromptsUpdater systemPromptsUpdater) : ILLMClient
+    public class GeminiLLMClient(GeminiApiService geminiApiService, IConfiguration configuration, IMemory memory, ISystemPromptsUpdater systemPromptsUpdater) : ILLMClient
     {
         public void Dispose()
         {
@@ -31,7 +31,7 @@ namespace HepaticaAI.Brain.Services.Gemini
 
             var combinedText = string.Join(" :", messages.Select(m => $"{m.Role}:{m.Message}"));
             var result = await geminiApiService.SummarizeAsync(savedMessages + "\n" + combinedText);
-            
+
             return result;
         }
     }

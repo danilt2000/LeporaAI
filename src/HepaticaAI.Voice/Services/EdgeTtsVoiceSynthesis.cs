@@ -6,6 +6,8 @@ namespace HepaticaAI.Voice.Services
     internal class EdgeTtsVoiceSynthesis(IAudioPlayer audioPlayer) : IVoiceSynthesis
     {
         public string Voice { get; set; } = "ru-RU-SvetlanaNeural";
+        //public string Voice { get; set; } = "en-US-JennyNeural";
+
         public string Rate { get; set; } = "+18%";
         public string Pitch { get; set; } = "+11Hz";
 

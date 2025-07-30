@@ -1,54 +1,54 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HepaticaAI.Core\HepaticaAI.Core.csproj" />
-    <PackageReference Include="Concentus" Version="2.2.2" />
-    <PackageReference Include="Deepgram" Version="5.0.0" />
-    <PackageReference Include="DeepL.net" Version="1.10.0" />
-    <PackageReference Include="DSharpPlus" Version="4.5.0" />
-    <PackageReference Include="DSharpPlus.Natives.Opus" Version="1.5.2.18" />
-    <PackageReference Include="DSharpPlus.VoiceNext" Version="4.5.0" />
-    <PackageReference Include="DSharpPlus.VoiceNext.Natives" Version="1.0.0" />
-    <PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
-    <PackageReference Include="NAudio" Version="2.2.1" />
-    <PackageReference Include="NAudio.WaveFormRenderer" Version="2.0.0" />
-    <PackageReference Include="OoLunar.DSharpPlus.VoiceLink.Natives.Opus" Version="1.5.2" />
-    <PackageReference Include="Pinecone.Client" Version="4.0.2" />
-    <PackageReference Include="Whisper.net" Version="1.7.4" />
-    <PackageReference Include="Whisper.net.AllRuntimes" Version="1.7.4" />
-    <PackageReference Include="Whisper.net.Runtime" Version="1.7.4" />
-    <PackageReference Include="Whisper.net.Runtime.Cuda.Windows" Version="1.7.4" />
-    <PackageReference Include="Google_GenerativeAI" Version="2.7.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\HepaticaAI.Core\HepaticaAI.Core.csproj" />
+		<PackageReference Include="Concentus" Version="2.2.2" />
+		<PackageReference Include="Deepgram" Version="5.0.0" />
+		<PackageReference Include="DeepL.net" Version="1.10.0" />
+		<PackageReference Include="DSharpPlus" Version="4.5.0" />
+		<PackageReference Include="DSharpPlus.Natives.Opus" Version="1.5.2.18" />
+		<PackageReference Include="DSharpPlus.VoiceNext" Version="4.5.0" />
+		<PackageReference Include="DSharpPlus.VoiceNext.Natives" Version="1.0.0" />
+		<PackageReference Include="Google.Apis.Auth" Version="1.70.0" />
+		<PackageReference Include="NAudio" Version="2.2.1" />
+		<PackageReference Include="NAudio.WaveFormRenderer" Version="2.0.0" />
+		<PackageReference Include="OoLunar.DSharpPlus.VoiceLink.Natives.Opus" Version="1.5.2" />
+		<PackageReference Include="Pinecone.Client" Version="4.0.2" />
+		<PackageReference Include="Whisper.net" Version="1.7.4" />
+		<PackageReference Include="Whisper.net.AllRuntimes" Version="1.7.4" />
+		<PackageReference Include="Whisper.net.Runtime" Version="1.7.4" />
+		<PackageReference Include="Whisper.net.Runtime.Cuda.Windows" Version="1.7.4" />
+		<PackageReference Include="Google_GenerativeAI" Version="2.7.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="ffmpeg.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="for-tests-ggml-base.bin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="ggml-base.bin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="koboldcpp.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="main_lepora-f08c5ff692c8_json.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="test.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="whisper-base.en-q5_1.bin">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="ffmpeg.exe">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="for-tests-ggml-base.bin">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="ggml-base.bin">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="koboldcpp.exe">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="main_lepora-f08c5ff692c8_json.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="test.wav">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="whisper-base.en-q5_1.bin">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

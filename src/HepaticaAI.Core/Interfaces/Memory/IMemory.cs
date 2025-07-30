@@ -19,6 +19,8 @@ namespace HepaticaAI.Core.Interfaces.Memory
         void AddVoiceEntryToProcessInQueue(string role, string message);
 
         string GetFormattedPrompt();
+        
+        List<MessageEntry> GetHistoryMessages();
 
         string GetFormattedPromptWithoutMemoryForgeting();
 
