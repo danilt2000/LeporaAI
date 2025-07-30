@@ -17,7 +17,7 @@ namespace HepaticaAI.Brain.Services
             koboldCppRunner.StartKoboldCpp();
         }
 
-        public async Task<string> GenerateAsync(string personality, string prompt)//Todo fix it or test this function now 
+        public async Task<string> GenerateAsync(string personality, string prompt)
         {
             try
             {
