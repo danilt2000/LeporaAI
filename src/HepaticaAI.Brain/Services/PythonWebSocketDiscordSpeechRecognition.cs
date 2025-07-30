@@ -13,7 +13,7 @@ namespace HepaticaAI.Brain.Services;
 public class PythonWebSocketDiscordSpeechRecognition : ISpeechRecognition
 {
     private ClientWebSocket _ws;
-    private readonly Uri _serverUri = new("ws://localhost:8765");
+    private readonly Uri _serverUri = new("ws://localhost:8765");//TODO THINK ABOUT HOW IT WILL WORK IN DOCKER
     private readonly IMemory _memory;
     private readonly DiscordService _discordService;
 
