@@ -2,7 +2,7 @@ name: JS CI/CD
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ "master", "develop" ]
     paths:
       - 'Samples/TypeScript/Demo/**'
       - '!**/*.md'
