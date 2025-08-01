@@ -1,0 +1,22 @@
+name: JS CI/CD
+
+on:
+  push:
+    branches: [ master, develop ]
+    paths:
+      - 'Samples/TypeScript/Demo/**'
+      - '!**/*.md'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build & push Demo image
+        uses: docker/build-push-action@v3
+        with:
+          context: Samples/TypeScript/Demo
+          push: true
+          tags: ghcr.io/${{ github.repository }}/demo-app:${{ github.sha }}
