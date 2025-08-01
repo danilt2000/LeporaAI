@@ -3,9 +3,9 @@ name: JS CI/CD
 on:
   push:
     branches: [ "master", "develop" ]
-    paths:
-      - 'Samples/TypeScript/Demo/**'
-      - '!**/*.md'
+    paths-ignore:
+      - 'README.md'
+      - '*.md'
 
 jobs:
   build-and-push:
