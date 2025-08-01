@@ -30,4 +30,5 @@ jobs:
           context: CubismSdkForWeb-5-r.4
           file: CubismSdkForWeb-5-r.4/Dockerfile
           push: true
-          tags: ghcr.io/lepora/movement/app:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
