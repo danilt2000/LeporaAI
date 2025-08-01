@@ -17,6 +17,7 @@ jobs:
       - name: Build & push Demo image
         uses: docker/build-push-action@v3
         with:
-          context: Samples/TypeScript/Demo
+          context: CubismSdkForWeb-5-r4/Samples/TypeScript/Demo
+          file: CubismSdkForWeb-5-r4/Samples/TypeScript/Demo/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/demo-app:${{ github.sha }}
+          tags: ghcr.io/lepora/movement/app:${{ github.sha }}
