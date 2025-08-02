@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="edge-tts" />
+  </ItemGroup>
+
 
 	
   <ItemGroup>
@@ -20,6 +24,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HepaticaAI.Core\HepaticaAI.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="edge-tts">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

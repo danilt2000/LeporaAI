@@ -1,14 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HepaticaAI.Vision.Services;
+using Microsoft.Extensions.Configuration;
 using Moq.AutoMock;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HepaticaAI.Vision.Services;
 using Xunit;
 
-namespace HepaticaAI.Brain.Tests.Services
+namespace HepaticaAI.Vision.Tests.Services
 {
         public class TwitchChatClientTest
         {

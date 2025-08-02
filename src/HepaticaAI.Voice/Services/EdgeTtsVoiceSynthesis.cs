@@ -1,11 +1,13 @@
 ﻿using HepaticaAI.Core.Interfaces.Voice;
 using System.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using TagLib;
 using File = System.IO.File;
+using Discord.Rest;
 
 namespace HepaticaAI.Voice.Services
 {
-    internal class EdgeTtsVoiceSynthesis(IAudioPlayer audioPlayer) : IVoiceSynthesis
+    internal class EdgeTtsVoiceSynthesis(IAudioPlayer audioPlayer, IConfiguration configuration) : IVoiceSynthesis
     {
         public string Voice { get; set; } = "ru-RU-SvetlanaNeural";
         //public string Voice { get; set; } = "en-US-JennyNeural";
@@ -15,16 +17,33 @@ namespace HepaticaAI.Voice.Services
 
         public void Speak(string text)
         {
+            ProcessStartInfo startInfo;
             string outputFile = $"output{DateTime.Now:yyyyMMddHHmmss}.mp3";
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            if (configuration["RUNNING_IN_DOCKER"] == "true")
             {
-                FileName = "edge-tts",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
+                var appDir = AppContext.BaseDirectory;          
+                var toolPath = Path.Combine(appDir, "edge-tts");       
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = toolPath,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+            }
+            else
+            {
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = "edge-tts",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+            }
 
             startInfo.ArgumentList.Add("--text");
             startInfo.ArgumentList.Add(text);
@@ -60,7 +79,7 @@ namespace HepaticaAI.Voice.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Error in process: " + ex.Message);
+                Console.WriteLine("Error in process: " + ex.Message);
             }
         }
 
@@ -73,15 +92,32 @@ namespace HepaticaAI.Voice.Services
         public string GenerateSpeakAudioAndGetFilePath(string text)
         {
             string outputFile = $"output{DateTime.Now:yyyyMMddHHmmss}.mp3";
+            ProcessStartInfo startInfo;
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            if (configuration["RUNNING_IN_DOCKER"] == "true")
             {
-                FileName = "edge-tts",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
+                var appDir = AppContext.BaseDirectory;
+                var toolPath = Path.Combine(appDir, "edge-tts");
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = toolPath,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+            }
+            else
+            {
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = "edge-tts",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+            }
 
             startInfo.ArgumentList.Add("--text");
             startInfo.ArgumentList.Add(text);
@@ -118,7 +154,7 @@ namespace HepaticaAI.Voice.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Error in process: " + ex.Message);
+                Console.WriteLine("Error in process: " + ex.Message);
 
                 throw;
             }
@@ -130,14 +166,32 @@ namespace HepaticaAI.Voice.Services
             string outputAudioFile = $"output{timestamp}.mp3";
             string outputSubtitleFile = $"output{timestamp}.vtt";
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            ProcessStartInfo startInfo;
+
+            if (configuration["RUNNING_IN_DOCKER"] == "true")
             {
-                FileName = "edge-tts",
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
+                var appDir = AppContext.BaseDirectory;
+                var toolPath = Path.Combine(appDir, "edge-tts");
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = toolPath,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+            }
+            else
+            {
+                startInfo = new ProcessStartInfo
+                {
+                    FileName = "edge-tts",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+            }
 
             startInfo.ArgumentList.Add("--text");
             startInfo.ArgumentList.Add(text);
@@ -167,7 +221,7 @@ namespace HepaticaAI.Voice.Services
 
                 if (process.ExitCode != 0)
                 {
-                    Debug.WriteLine($"Error: {error}");
+                    Console.WriteLine($"Error: {error}");
                     throw new InvalidProgramException();
                 }
 
@@ -177,7 +231,7 @@ namespace HepaticaAI.Voice.Services
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Error in process: " + ex.Message);
+                Console.WriteLine("Error in process: " + ex.Message);
                 throw;
             }
         }

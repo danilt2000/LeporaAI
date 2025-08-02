@@ -9,7 +9,16 @@ namespace HepaticaAI.Vision
     {
         public static IServiceCollection AddVision(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
-            serviceCollection.AddSingleton<IChatClient, TwitchChatClient>();
+
+            if (configuration["SttPlotformsToListen"] == "Youtube")
+            {
+                serviceCollection.AddSingleton<IChatClient, YoutubeChatClient>();
+            }
+
+            if (configuration["SttPlotformsToListen"] == "Twitch")
+            {
+                serviceCollection.AddSingleton<IChatClient, TwitchChatClient>();
+            }
 
             return serviceCollection;
         }
