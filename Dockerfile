@@ -3,9 +3,11 @@ USER app
 WORKDIR /app
 USER root
 RUN apt-get update \
- && apt-get install -y python3 python3-pip \
- && pip3 install edge-tts \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      python3 python3-pip \
  && rm -rf /var/lib/apt/lists/*
+RUN pip3 install --no-cache-dir edge-tts
+
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
