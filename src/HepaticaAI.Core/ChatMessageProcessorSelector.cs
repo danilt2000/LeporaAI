@@ -91,6 +91,8 @@ namespace HepaticaAI.Core
                 var userMessages = string.Join(" :", chatMessagesToProcess.Select(m => $"{m.Role}:{m.Message}"));
 
                 Debug.WriteLine($"Users messages :{userMessages}");
+                Console.WriteLine($"Users messages :{userMessages}");
+                Console.WriteLine($"Ai answer:{aiAnswer}");
                 Debug.WriteLine($"Ai answer:{aiAnswer}");
                 _movement.StartWinkAnimation();
                 _movement.OpenMouth();
