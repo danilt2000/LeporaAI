@@ -20,30 +20,30 @@ namespace HepaticaAI.Voice.Services
             ProcessStartInfo startInfo;
             string outputFile = $"output{DateTime.Now:yyyyMMddHHmmss}.mp3";
 
-            if (configuration["RUNNING_IN_DOCKER"] == "true")
+            //if (configuration["RUNNING_IN_DOCKER"] == "true")
+            //{
+            //    var appDir = AppContext.BaseDirectory;
+            //    var toolPath = Path.Combine(appDir, "edge-tts");
+            //    startInfo = new ProcessStartInfo
+            //    {
+            //        FileName = toolPath,
+            //        UseShellExecute = false,
+            //        RedirectStandardOutput = true,
+            //        RedirectStandardError = true,
+            //        CreateNoWindow = true
+            //    };
+            //}
+            //else
+            //{
+            startInfo = new ProcessStartInfo
             {
-                var appDir = AppContext.BaseDirectory;
-                var toolPath = Path.Combine(appDir, "edge-tts");
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = toolPath,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-            }
-            else
-            {
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = "edge-tts",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-            }
+                FileName = "edge-tts",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+            //}
 
             startInfo.ArgumentList.Add("--text");
             startInfo.ArgumentList.Add(text);
@@ -94,30 +94,30 @@ namespace HepaticaAI.Voice.Services
             string outputFile = $"output{DateTime.Now:yyyyMMddHHmmss}.mp3";
             ProcessStartInfo startInfo;
 
-            if (configuration["RUNNING_IN_DOCKER"] == "true")
+            //if (configuration["RUNNING_IN_DOCKER"] == "true")
+            //{
+            //    var appDir = AppContext.BaseDirectory;
+            //    var toolPath = Path.Combine(appDir, "edge-tts");
+            //    startInfo = new ProcessStartInfo
+            //    {
+            //        FileName = toolPath,
+            //        UseShellExecute = false,
+            //        RedirectStandardOutput = true,
+            //        RedirectStandardError = true,
+            //        CreateNoWindow = true
+            //    };
+            //}
+            //else
+            //{
+            startInfo = new ProcessStartInfo
             {
-                var appDir = AppContext.BaseDirectory;
-                var toolPath = Path.Combine(appDir, "edge-tts");
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = toolPath,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-            }
-            else
-            {
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = "edge-tts",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-            }
+                FileName = "edge-tts",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+            //}
 
             startInfo.ArgumentList.Add("--text");
             startInfo.ArgumentList.Add(text);
@@ -168,30 +168,30 @@ namespace HepaticaAI.Voice.Services
 
             ProcessStartInfo startInfo;
 
-            if (configuration["RUNNING_IN_DOCKER"] == "true")
+            //if (configuration["RUNNING_IN_DOCKER"] == "true")
+            //{
+            //    var appDir = AppContext.BaseDirectory;
+            //    var toolPath = Path.Combine(appDir, "edge-tts");
+            //    startInfo = new ProcessStartInfo
+            //    {
+            //        FileName = toolPath,
+            //        UseShellExecute = false,
+            //        RedirectStandardOutput = true,
+            //        RedirectStandardError = true,
+            //        CreateNoWindow = true
+            //    };
+            //}
+            //else
+            //{
+            startInfo = new ProcessStartInfo
             {
-                var appDir = AppContext.BaseDirectory;
-                var toolPath = Path.Combine(appDir, "edge-tts");
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = toolPath,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-            }
-            else
-            {
-                startInfo = new ProcessStartInfo
-                {
-                    FileName = "edge-tts",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true
-                };
-            }
+                FileName = "edge-tts",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+            //}
 
             startInfo.ArgumentList.Add("--text");
             startInfo.ArgumentList.Add(text);
