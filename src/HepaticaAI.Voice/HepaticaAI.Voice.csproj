@@ -22,10 +22,4 @@
     <ProjectReference Include="..\HepaticaAI.Core\HepaticaAI.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="edge-tts">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

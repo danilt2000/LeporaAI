@@ -1,8 +1,11 @@
-#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
+USER root
+RUN apt-get update \
+ && apt-get install -y python3 python3-pip \
+ && pip3 install edge-tts \
+ && rm -rf /var/lib/apt/lists/*
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
