@@ -22,8 +22,8 @@ namespace HepaticaAI.Voice.Services
 
             if (configuration["RUNNING_IN_DOCKER"] == "true")
             {
-                var appDir = AppContext.BaseDirectory;          
-                var toolPath = Path.Combine(appDir, "edge-tts");       
+                var appDir = AppContext.BaseDirectory;
+                var toolPath = Path.Combine(appDir, "edge-tts");
                 startInfo = new ProcessStartInfo
                 {
                     FileName = toolPath,
