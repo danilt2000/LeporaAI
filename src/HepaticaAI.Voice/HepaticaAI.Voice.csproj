@@ -6,10 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="edge-tts" />
-  </ItemGroup>
-
 
 	
   <ItemGroup>
@@ -27,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="edge-tts">
+    <None Update="edge-tts">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
   </ItemGroup>
 
 </Project>
