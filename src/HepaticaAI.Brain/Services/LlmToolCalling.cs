@@ -91,22 +91,6 @@ namespace HepaticaAI.Brain.Services
             payload.Temperature = 0;
             payload.TopP = 0.1;
 
-            //var payload = new
-            //{
-            //    model = _configuration["Gpt4free:Model"] ?? "gpt-4.1",
-            //    provider = _configuration["Gpt4free:Provider"] ?? "PollinationsAI",
-            //    messages = messages
-            //        .Select(m => new
-            //        {
-            //            role = string.Equals(m.Role, "LeporaAI", StringComparison.OrdinalIgnoreCase)
-            //                ? "assistant"
-            //                : "user",
-            //            content = $"{m.Role}:{m.Message}"
-            //        })
-            //        .Prepend(new { role = "system", content = systemPrompt })
-            //        .ToList()
-            //};
-
             var attemps = 0;
             while (attemps < 10)
             {

@@ -1,6 +1,8 @@
 ﻿using HepaticaAI.Core.Interfaces.Voice;
 using System.Diagnostics;
 using TagLib;
+using File = System.IO.File;
+
 namespace HepaticaAI.Voice.Services
 {
     internal class EdgeTtsVoiceSynthesis(IAudioPlayer audioPlayer) : IVoiceSynthesis
@@ -51,6 +53,8 @@ namespace HepaticaAI.Voice.Services
                     Debug.WriteLine($"Error: {error}");
                     return;
                 }
+
+                CleanupOldAudioFiles();
 
                 audioPlayer.PlayAudio(outputFile);
             }
@@ -107,6 +111,8 @@ namespace HepaticaAI.Voice.Services
 
                     throw new InvalidProgramException();
                 }
+
+                CleanupOldAudioFiles();
 
                 return outputFile;
             }
@@ -165,6 +171,8 @@ namespace HepaticaAI.Voice.Services
                     throw new InvalidProgramException();
                 }
 
+                CleanupOldAudioFiles();
+
                 return (outputAudioFile, outputSubtitleFile);
             }
             catch (Exception ex)
@@ -173,5 +181,39 @@ namespace HepaticaAI.Voice.Services
                 throw;
             }
         }
+
+        public static void CleanupOldAudioFiles(TimeSpan maxAge)
+        {
+            try
+            {
+                var directory = Directory.GetCurrentDirectory();
+                var filesToDelete = Directory.GetFiles(directory, "output*.mp3")
+                    .Where(file =>
+                    {
+                        var fileInfo = new FileInfo(file);
+                        return DateTime.Now - fileInfo.CreationTime > maxAge;
+                    })
+                    .ToList();
+
+                foreach (var file in filesToDelete)
+                {
+                    try
+                    {
+                        File.Delete(file);
+                        Console.WriteLine($"Deleted old audio file: {file}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Failed to delete {file}: {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during cleanup: {ex.Message}");
+            }
+        }
+
+        public static void CleanupOldAudioFiles() => CleanupOldAudioFiles(TimeSpan.FromMinutes(10));
     }
 }
