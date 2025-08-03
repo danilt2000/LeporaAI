@@ -2,6 +2,6 @@
 {
         public interface IChatClient
         {
-                void Connect();
+                Task Connect();
         }
 }

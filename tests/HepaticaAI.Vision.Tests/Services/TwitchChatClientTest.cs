@@ -27,7 +27,7 @@ namespace HepaticaAI.Vision.Tests.Services
                 [Fact]
                 public async Task ConnectTest()
                 {
-                        _sut.Connect();
+                        await _sut.Connect();
                         
                         await Task.Delay(13000);
                 }

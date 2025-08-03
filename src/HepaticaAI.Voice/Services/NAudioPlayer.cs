@@ -28,11 +28,10 @@ namespace HepaticaAI.Voice.Services
             {
                 Thread.Sleep(500);
             }
-
             
             _playbackCompleted.WaitOne();
 
-            DeleteMp3FilesInFolder(filePath);//Todo uncomment this 
+            DeleteMp3FilesInFolder(filePath);
         }
         private void DeleteMp3FilesInFolder(string filePath)
         {

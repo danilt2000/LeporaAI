@@ -1,7 +1,6 @@
 ﻿using HepaticaAI.Core.Interfaces.Voice;
 using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
-using TagLib;
 using File = System.IO.File;
 using Discord.Rest;
 

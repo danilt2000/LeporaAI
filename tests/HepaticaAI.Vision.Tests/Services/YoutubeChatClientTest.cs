@@ -1,9 +1,4 @@
 ﻿using HepaticaAI.Vision.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Moq.AutoMock;
 using Xunit;
@@ -32,9 +27,9 @@ namespace HepaticaAI.Vision.Tests.Services
         [Fact]
         public async Task ConnectTest()
         {
-            _sut.Connect();
+            await _sut.Connect();
 
-            await Task.Delay(13000);
+            await Task.Delay(1300000000);
         }
     }
 }
