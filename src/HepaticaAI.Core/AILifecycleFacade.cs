@@ -22,7 +22,10 @@ namespace HepaticaAI.Core
 
             movement.Initialize();
 
-            await chatClient.Connect();//Todo add possibility to disable chat listening
+            Task.Run(async () =>
+            {
+                await chatClient.Connect();//Todo add possibility to disable chat listening
+            });
 
             socketViewerWebSocketBridge.Start();
             //speechRecognition.Start();//TODO REWRITE TO WORK WITH CHAT LISTENING 
