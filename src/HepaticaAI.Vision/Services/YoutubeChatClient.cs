@@ -97,16 +97,9 @@ namespace HepaticaAI.Vision.Services
                 }
                 catch (Exception e)
                 {
-                    if (e.Message.Contains("The channel is not currently live", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Console.WriteLine("❌ Channel not live yet. Retrying in 3 seconds...");
-                        await Task.Delay(3000);
-                        continue;
-                    }
-
-                    Console.WriteLine("❌ Unexpected error:");
-                    Console.WriteLine(e);
-                    throw;
+                    Console.WriteLine(e.Message);
+                    await Task.Delay(3000);
+                    continue;
                 }
             }
         }
