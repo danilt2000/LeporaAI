@@ -29,7 +29,7 @@ namespace HepaticaAI.Core
         private readonly List<MessageEntry> _voiceChatMessageQueue = new();//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
         private readonly ConcurrentDictionary<Guid, MessageForVoiceToProcess> _generatedChatResponses = new();//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
         public string CurrentSpeakAudioPath = string.Empty;//TODO ADD CLEAR DELETING POSSIBILITIES FOR MESSAGE QUEUES
-        private readonly TimeSpan _interval = TimeSpan.FromSeconds(2);
+        private readonly TimeSpan _interval = TimeSpan.FromMilliseconds(100);
         public bool IsNotPlayingIntermediateOrFinalSpeech { get; set; } = true;
 
         public DateTime LastIsNotPlayingIntermediateOrFinalSpeechChange { get; set; } = DateTime.MinValue;

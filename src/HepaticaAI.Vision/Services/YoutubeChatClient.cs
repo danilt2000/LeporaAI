@@ -54,7 +54,7 @@ namespace HepaticaAI.Vision.Services
             return null;
         }
 
-        public async Task Connect()
+        public async Task Connect()//TODO FIX ID CHANGE 
         {
             while (true)
             {
