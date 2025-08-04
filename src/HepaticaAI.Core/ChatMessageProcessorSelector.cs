@@ -94,10 +94,10 @@ namespace HepaticaAI.Core
                 Console.WriteLine($"Users messages :{userMessages}");
                 Console.WriteLine($"Ai answer:{aiAnswer}");
                 Debug.WriteLine($"Ai answer:{aiAnswer}");
-                _movement.StartWinkAnimation();
-                _movement.OpenMouth();
+                //_movement.StartWinkAnimation();
+                //_movement.OpenMouth();
 
-                await _socketViewerWebSocketBridge.SendMessageAsync(aiAnswer);
+                //await _socketViewerWebSocketBridge.SendMessageAsync(aiAnswer);//TODO: UNCOMMIT AND START TO WORK WITH IT IN DISCORD
                 _voice.Speak(aiAnswer);
                 //var speakAudioPath = _voice.GenerateSpeakAudioAndGetFilePath(aiAnswer);
 
@@ -122,7 +122,7 @@ namespace HepaticaAI.Core
 
                 //_idleTimer.Change(_idleInterval, Timeout.InfiniteTimeSpan);//Todo think about deleting idle timer 
 
-                _movement.CloseMouth();
+                //_movement.CloseMouth();
 
                 _memory.StopProcessing();
             }
