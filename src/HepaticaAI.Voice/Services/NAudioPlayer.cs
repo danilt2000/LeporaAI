@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using HepaticaAI.Core.Interfaces.Voice;
+using LibVLCSharp.Shared;
 using NAudio.Wave;
 namespace HepaticaAI.Voice.Services
 {
@@ -14,22 +15,33 @@ namespace HepaticaAI.Voice.Services
         }
         public void PlayAudio(string filePath)
         {
-            using var audioFile = new AudioFileReader(filePath);
+            //using var audioFile = new AudioFileReader(filePath);//TODO: DELETE 
 
-            audioFile.Volume = 0.3f;
-            
-            using var outputDevice = new WaveOutEvent();
-            outputDevice.PlaybackStopped += OnPlaybackStopped;
+            //audioFile.Volume = 0.3f;
 
-            outputDevice.Init(audioFile);
-            outputDevice.Play();
+            //using var outputDevice = new WaveOutEvent();
+            //outputDevice.PlaybackStopped += OnPlaybackStopped;
 
-            while (outputDevice.PlaybackState == PlaybackState.Playing)
-            {
-                Thread.Sleep(500);
-            }
-            
-            _playbackCompleted.WaitOne();
+            //outputDevice.Init(audioFile);
+            //outputDevice.Play();
+
+            //while (outputDevice.PlaybackState == PlaybackState.Playing)
+            //{
+            //    Thread.Sleep(500);
+            //}
+
+            //_playbackCompleted.WaitOne();
+
+            using var libVLC = new LibVLC();
+            using var mediaPlayer = new MediaPlayer(libVLC);
+            using var media = new Media(libVLC, filePath, FromType.FromPath);
+            using var playbackCompleted = new ManualResetEventSlim(false);
+
+            mediaPlayer.EndReached += (_, _) => playbackCompleted.Set();
+
+            mediaPlayer.Play(media);
+
+            playbackCompleted.Wait();
 
             DeleteMp3FilesInFolder(filePath);
         }
