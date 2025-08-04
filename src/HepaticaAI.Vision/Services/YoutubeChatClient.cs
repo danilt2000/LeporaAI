@@ -88,6 +88,7 @@ namespace HepaticaAI.Vision.Services
 
                         var author = authorMsg[0].Trim();
                         var message = authorMsg[1].Trim();
+                        Console.WriteLine($"{author}:{message}");
 
                         _memory.AddEntryToProcessInQueue(author, message);
                         OnMessageReceived(author, message);
