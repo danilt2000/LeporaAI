@@ -10,7 +10,7 @@ namespace HepaticaAI.Core
         {
             serviceCollection.AddSingleton<AILifecycleFacade>();
 
-            serviceCollection.AddSingleton<IHostedService, AIBackgroundService>();
+            //serviceCollection.AddSingleton<IHostedService, AIBackgroundService>();
 
             //serviceCollection.AddSingleton<VoiceMessageProcessorSelector>();//TODO UNCOMMIT AFTER STARTING TO WORK WITH DISCORD TTS 
             serviceCollection.AddSingleton<ChatMessageProcessorSelector>();

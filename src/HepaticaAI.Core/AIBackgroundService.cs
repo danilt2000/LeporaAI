@@ -6,12 +6,12 @@ namespace HepaticaAI.Core
     {
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            await aiLifecycleFacade.StartLife();
+            //await aiLifecycleFacade.StartLife();
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            aiLifecycleFacade.EndLife();
+            //aiLifecycleFacade.EndLife();
 
             return Task.CompletedTask;
         }
