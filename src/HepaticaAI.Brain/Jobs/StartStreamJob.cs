@@ -20,6 +20,8 @@ namespace HepaticaAI.Brain.Jobs
                 description
             );
 
+            await Task.Delay(TimeSpan.FromMinutes(1));
+
             browserService.OpenStreamSettingsPage(livestreamId!);
 
             await Task.Delay(TimeSpan.FromMinutes(1));
