@@ -15,39 +15,29 @@ namespace HepaticaAI.Brain.Services
                 UseShellExecute = false
             };
 
-            var process = Process.Start(psi);
+            Process.Start(psi);
 
-            //var psi = new ProcessStartInfo
-            //{
-            //    FileName = "bash",
-            //    Arguments = $"-c \"timeout 120s firefox --new-window '{url}'\"",
-            //    UseShellExecute = false
-            //};
+            Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromMinutes(2));
 
-            //Process.Start(psi);
+                try
+                {
+                    var psiKill = new ProcessStartInfo
+                    {
+                        FileName = "pkill",
+                        Arguments = "firefox",
+                        UseShellExecute = false
+                    };
 
-            //if (process == null)
-            //{
-            //    Console.WriteLine("Не удалось запустить Firefox.");
-            //    return;
-            //}
-
-            //Console.WriteLine($"Firefox запущен с PID {process.Id}");
-
-            //Task.Run(async () =>
-            //{
-            //    await Task.Delay(TimeSpan.FromMinutes(2));
-
-            //    try
-            //    {
-            //        process.Kill();
-            //        Console.WriteLine("Firefox был закрыт автоматически через 2 минуты.");
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine($"Ошибка при завершении Firefox: {ex.Message}");
-            //    }
-            //});
+                    Process.Start(psiKill);
+                    Console.WriteLine("Firefox был закрыт автоматически через 2 минуты.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка при завершении Firefox: {ex.Message}");
+                }
+            });
         }
     }
 }
