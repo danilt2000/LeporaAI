@@ -1,4 +1,9 @@
-﻿using HepaticaAI.Core.Interfaces.Memory;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Google.Apis.Util.Store;
+using Google.Apis.YouTube.v3.Data;
+using Google.Apis.YouTube.v3;
+using HepaticaAI.Core.Interfaces.Memory;
 using HepaticaAI.Core.Interfaces.Vision;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
@@ -8,8 +13,6 @@ namespace HepaticaAI.Vision.Services
 {
     internal class YoutubeChatClient : IChatClient, IDisposable
     {
-        //chat_downloader https://www.youtube.com/watch?v=ajgiAZqNjIY
-
         private readonly IMemory _memory;
         private readonly string _videoId;
         private Process? _chatProcess;
@@ -103,6 +106,58 @@ namespace HepaticaAI.Vision.Services
                     continue;
                 }
             }
+        }
+
+        private async Task<UserCredential> GetUserCredentialAsync()
+        {
+            using var stream = new FileStream(
+                "client_secret_680158819564-dp4pgtom08fu554nv1np9pm169r7b11s.apps.googleusercontent.com.json",
+                FileMode.Open, FileAccess.Read);
+
+            return await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                GoogleClientSecrets.FromStream(stream).Secrets,
+                new[] { YouTubeService.Scope.Youtube },
+                "user",
+                CancellationToken.None,
+                new FileDataStore("token_storage", true)
+            );
+        }
+
+        public async Task<string?> ScheduleLivestreamAsync(DateTime scheduledStartTimeUtc, string title, string description)
+        {
+            var credential = await GetUserCredentialAsync();
+
+            var youtubeService = new YouTubeService(new BaseClientService.Initializer
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "HepaticaAI"
+            });
+
+            var broadcast = new LiveBroadcast
+            {
+                Kind = "youtube#liveBroadcast",
+                Snippet = new LiveBroadcastSnippet
+                {
+                    Title = title,
+                    Description = description,
+                    ScheduledStartTimeDateTimeOffset = new DateTimeOffset(scheduledStartTimeUtc, TimeSpan.Zero)
+                },
+                Status = new LiveBroadcastStatus
+                {
+                    PrivacyStatus = "public",
+                    SelfDeclaredMadeForKids = false
+                },
+                ContentDetails = new LiveBroadcastContentDetails
+                {
+                    EnableAutoStart = true,
+                    EnableAutoStop = true,
+                    LatencyPreference = "ultraLow"
+                }
+            };
+
+            var insertRequest = youtubeService.LiveBroadcasts.Insert(broadcast, "snippet,status,contentDetails");
+            var response = await insertRequest.ExecuteAsync();
+            return response.Id;
         }
 
         public void SendMessage(string message) =>

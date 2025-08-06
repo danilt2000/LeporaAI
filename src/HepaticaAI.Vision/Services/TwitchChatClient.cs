@@ -32,6 +32,11 @@ namespace HepaticaAI.Vision.Services
             return Task.CompletedTask;
         }
 
+        public Task<string?> ScheduleLivestreamAsync(DateTime scheduledStartTimeUtc, string title, string description)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SendMessage(string message) => _client.SendMessage(_client.JoinedChannels[0], message);
 
         private void HandleMessageReceived(object sender, OnMessageReceivedArgs e)

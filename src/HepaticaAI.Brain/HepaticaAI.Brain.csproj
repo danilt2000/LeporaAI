@@ -21,6 +21,7 @@
 		<PackageReference Include="OoLunar.DSharpPlus.VoiceLink.Natives.Opus" Version="1.5.2" />
 		<PackageReference Include="Pinecone.Client" Version="4.0.2" />
 		<PackageReference Include="Google_GenerativeAI" Version="2.7.0" />
+		<PackageReference Include="Quartz.AspNetCore" Version="3.14.0" />
 	</ItemGroup>
 
 	<ItemGroup>

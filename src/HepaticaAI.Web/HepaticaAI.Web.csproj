@@ -26,6 +26,9 @@
 		<Content Update="appsettings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Update="client_secret_680158819564-dp4pgtom08fu554nv1np9pm169r7b11s.apps.googleusercontent.com.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 </Project>
