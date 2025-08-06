@@ -31,11 +31,8 @@ namespace HepaticaAI.Brain.Services
 
                 try
                 {
-                    if (!process.HasExited)
-                    {
-                        process.Kill();
-                        Console.WriteLine("Firefox был закрыт автоматически через 2 минуты.");
-                    }
+                    process.Kill();
+                    Console.WriteLine("Firefox был закрыт автоматически через 2 минуты.");
                 }
                 catch (Exception ex)
                 {

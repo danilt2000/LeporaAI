@@ -46,7 +46,7 @@ namespace HepaticaAI.Brain
                     .WithIdentity("StartStreamJob-trigger")
                     //.WithCronSchedule("0 0 16 * * ?", x => x // 16:00 UTC
                     //.InTimeZone(TimeZoneInfo.Utc))
-                    .WithCronSchedule("0 59 3 * * ?", x => x
+                    .WithCronSchedule("0 11 4 * * ?", x => x
                         .InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Europe/Prague")))
                 );
 
