@@ -1,12 +1,15 @@
-﻿using Quartz;
+﻿using HepaticaAI.Core;
+using Quartz;
 
 namespace HepaticaAI.Brain.Jobs
 {
-    public class EndStreamJob : IJob
+    public class EndStreamJob(ObsProcessor obsProcessor) : IJob
     {
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-            throw new NotImplementedException();
+            await obsProcessor.StopStreamAsync();
+
+            await obsProcessor.DisposeAsync();
         }
     }
 }
