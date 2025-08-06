@@ -8,23 +8,23 @@ namespace HepaticaAI.Brain.Services
         {
             string url = $"https://studio.youtube.com/video/{livestreamId}/livestreaming";
 
-            //var psi = new ProcessStartInfo
-            //{
-            //    FileName = "firefox",
-            //    Arguments = $"--new-window \"{url}\"",
-            //    UseShellExecute = false
-            //};
-
-            //var process = Process.Start(psi);
-
             var psi = new ProcessStartInfo
             {
-                FileName = "bash",
-                Arguments = $"-c \"timeout 120s firefox --new-window '{url}'\"",
+                FileName = "firefox",
+                Arguments = $"--new-window \"{url}\"",
                 UseShellExecute = false
             };
 
-            Process.Start(psi);
+            var process = Process.Start(psi);
+
+            //var psi = new ProcessStartInfo
+            //{
+            //    FileName = "bash",
+            //    Arguments = $"-c \"timeout 120s firefox --new-window '{url}'\"",
+            //    UseShellExecute = false
+            //};
+
+            //Process.Start(psi);
 
             //if (process == null)
             //{
